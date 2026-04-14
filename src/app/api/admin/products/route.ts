@@ -43,6 +43,43 @@ export async function POST(req: NextRequest) {
   }
 }
 
+// PATCH update product
+export async function PATCH(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, ...updates } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing product ID" }, { status: 400 });
+    }
+
+    const patchData: any = {
+      name: updates.name,
+      slug: { _type: "slug", current: updates.slug },
+      price: Number(updates.price),
+      category: updates.category,
+      collection: updates.collection || "",
+      description: updates.description || "",
+      sizes: updates.sizes,
+      featured: updates.featured || false,
+    };
+
+    // Only update images if new assets are provided
+    if (updates.imageAssetIds && updates.imageAssetIds.length > 0) {
+      patchData.images = updates.imageAssetIds.map((assetId: string, idx: number) => ({
+        _type: "image",
+        _key: `img-${idx}-${Date.now()}`,
+        asset: { _type: "reference", _ref: assetId },
+      }));
+    }
+
+    const result = await writeClient.patch(id).set(patchData).commit();
+    return NextResponse.json({ success: true, id: result._id });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 // DELETE product
 export async function DELETE(req: NextRequest) {
   try {

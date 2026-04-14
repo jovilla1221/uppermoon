@@ -19,9 +19,11 @@ export default function AdminPage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -102,47 +104,74 @@ export default function AdminPage() {
       .replace(/(^-|-$)/g, "");
   };
 
+  const handleEdit = (product: any) => {
+    setIsEditing(true);
+    setEditingId(product._id);
+    setForm({
+      name: product.name,
+      slug: product.slug,
+      price: product.price.toString(),
+      category: product.category,
+      collection: product.collection || "",
+      description: product.description || "",
+      sizes: product.sizes || ["S", "M", "L", "XL"],
+    });
+    setImagePreviews(product.gallery || [product.image]);
+    setImageFiles([]); // Clear new uploads state
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const resetForm = () => {
+    setForm({ name: "", slug: "", price: "", category: "TOPS", collection: "", description: "", sizes: ["S", "M", "L", "XL"] });
+    setImageFiles([]);
+    setImagePreviews([]);
+    setIsEditing(false);
+    setEditingId(null);
+    setShowForm(false);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (imageFiles.length === 0) {
+    if (!isEditing && imageFiles.length === 0) {
       setMessage("⚠️ Tambahkan minimal 1 foto produk");
       return;
     }
 
     setUploading(true);
-    setMessage("Mengupload foto...");
+    setMessage(isEditing ? "Memperbarui produk..." : "Mengupload foto...");
 
-    // Upload images
+    // Upload images ONLY if new ones are selected
     const assetIds: string[] = [];
-    for (const file of imageFiles) {
-      const formData = new FormData();
-      formData.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (data.assetId) assetIds.push(data.assetId);
+    if (imageFiles.length > 0) {
+      for (const file of imageFiles) {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+        const data = await res.json();
+        if (data.assetId) assetIds.push(data.assetId);
+      }
     }
 
-    setMessage("Menyimpan produk...");
+    setMessage(isEditing ? "Mengirim pembaruan..." : "Menyimpan produk...");
 
-    // Create product
+    // Create or Update product
     const res = await fetch("/api/admin/products", {
-      method: "POST",
+      method: isEditing ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
+        id: editingId,
         slug: form.slug || generateSlug(form.name),
         price: Number(form.price),
-        imageAssetIds: assetIds,
+        imageAssetIds: assetIds.length > 0 ? assetIds : undefined,
       }),
     });
 
     const data = await res.json();
     if (data.success) {
-      setMessage("✅ Produk berhasil ditambahkan!");
-      setForm({ name: "", slug: "", price: "", category: "TOPS", collection: "", description: "", sizes: ["S", "M", "L", "XL"] });
-      setImageFiles([]);
-      setImagePreviews([]);
-      setShowForm(false);
+      setMessage(isEditing ? "✅ Produk berhasil diperbarui!" : "✅ Produk berhasil ditambahkan!");
+      resetForm();
       fetchProducts();
     } else {
       setMessage("❌ Gagal: " + data.error);
@@ -242,7 +271,10 @@ export default function AdminPage() {
             <p className="text-xs text-neutral-500 mt-1">{products.length} item dalam katalog</p>
           </div>
           <button
-            onClick={() => setShowForm(!showForm)}
+            onClick={() => {
+              if (showForm) resetForm();
+              else setShowForm(true);
+            }}
             className="bg-white text-black px-6 py-3 text-xs font-bold tracking-[0.15em] uppercase hover:bg-neutral-200 transition-colors flex items-center gap-2"
           >
             <span>{showForm ? "✕ TUTUP" : "+ TAMBAH PRODUK"}</span>
@@ -252,7 +284,7 @@ export default function AdminPage() {
         {/* Add Product Form */}
         {showForm && (
           <form onSubmit={handleSubmit} className="mb-12 bg-neutral-900 border border-neutral-800 p-8">
-            <h3 className="text-sm font-bold tracking-[0.15em] uppercase mb-6">Tambah Produk Baru</h3>
+            <h3 className="text-sm font-bold tracking-[0.15em] uppercase mb-6">{isEditing ? "Edit Produk" : "Tambah Produk Baru"}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">Nama Produk *</label>
@@ -346,19 +378,21 @@ export default function AdminPage() {
             </div>
             <div className="mt-6">
               <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">
-                Foto Produk * (bisa lebih dari 1)
+                Foto Produk {isEditing ? "(kosongkan jika tidak ingin ganti)" : "*"}
               </label>
               <div className="flex flex-wrap gap-4 mb-4">
                 {imagePreviews.map((src, idx) => (
                   <div key={idx} className="relative group w-24 h-24 bg-neutral-800 border border-neutral-700">
                     <img src={src} alt="" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => removeImage(idx)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      ✕
-                    </button>
+                    {!isEditing && (
+                      <button
+                        type="button"
+                        onClick={() => removeImage(idx)}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
                 ))}
                 <button
@@ -371,13 +405,24 @@ export default function AdminPage() {
               </div>
               <input ref={fileRef} type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
             </div>
-            <button
-              type="submit"
-              disabled={uploading}
-              className="mt-6 bg-white text-black px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {uploading ? "MENYIMPAN..." : "SIMPAN PRODUK"}
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                disabled={uploading}
+                className="bg-white text-black px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {uploading ? (isEditing ? "MEMPERBARUI..." : "MENYIMPAN...") : (isEditing ? "UPDATE PRODUK" : "SIMPAN PRODUK")}
+              </button>
+              {isEditing && (
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="border border-neutral-700 text-white px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-800 transition-colors"
+                >
+                  BATAL
+                </button>
+              )}
+            </div>
           </form>
         )}
 
@@ -412,6 +457,12 @@ export default function AdminPage() {
                 >
                   VIEW
                 </a>
+                <button
+                  onClick={() => handleEdit(p)}
+                  className="text-[10px] tracking-widest uppercase text-neutral-500 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  EDIT
+                </button>
                 <button
                   onClick={() => p._id && handleDelete(p._id, p.name)}
                   className="text-[10px] tracking-widest uppercase text-red-500 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100"
