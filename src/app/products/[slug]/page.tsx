@@ -13,8 +13,16 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
     name: "OVERSIZED BOXY HOODIE",
     price: 120.00,
     collection: "BLACK MONOLITH SERIES",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHozJb72McCjTGaj21WdaDQQcMP7PgAeLwWR6uGeKNQtFahGplbh8VpGlPJALOwvEClYSY7WxPS-7c3XdXm66VsQ4yxNjEY4zF7HhYzAoa0xI7zxurJEXcrRQymTvkP-S43u_oDNLw6fonQ9YHh7lBfzEGb8JoPi6J3i5LuzY1ihEme8vpH0Iyaa91WSN1VGElL-r1pfMeDhv-tLPQ3VotXjoGWjT9I6-WIKOCBT8RtR1bdquQUVjy9E4JvjlmNMeNYdHdiU2zj-Kx"
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHozJb72McCjTGaj21WdaDQQcMP7PgAeLwWR6uGeKNQtFahGplbh8VpGlPJALOwvEClYSY7WxPS-7c3XdXm66VsQ4yxNjEY4zF7HhYzAoa0xI7zxurJEXcrRQymTvkP-S43u_oDNLw6fonQ9YHh7lBfzEGb8JoPi6J3i5LuzY1ihEme8vpH0Iyaa91WSN1VGElL-r1pfMeDhv-tLPQ3VotXjoGWjT9I6-WIKOCBT8RtR1bdquQUVjy9E4JvjlmNMeNYdHdiU2zj-Kx",
+    gallery: [
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAHozJb72McCjTGaj21WdaDQQcMP7PgAeLwWR6uGeKNQtFahGplbh8VpGlPJALOwvEClYSY7WxPS-7c3XdXm66VsQ4yxNjEY4zF7HhYzAoa0xI7zxurJEXcrRQymTvkP-S43u_oDNLw6fonQ9YHh7lBfzEGb8JoPi6J3i5LuzY1ihEme8vpH0Iyaa91WSN1VGElL-r1pfMeDhv-tLPQ3VotXjoGWjT9I6-WIKOCBT8RtR1bdquQUVjy9E4JvjlmNMeNYdHdiU2zj-Kx",
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBrWbC4-NQ5NnMYBl3NgHFdaa0LdIf0RqqH6-dgFFRyG6rdcuHc8PE4bQL2xUSxZ_XaMYTnCSURrHoFC2HjfudG9v5h6Go_LVbxKgIPUD8wjdhg_UXJffTGsW8JtO8FEIo8KZhQsFghLstlgqZr-XV2gRB9VXU02DFMrGlhAUZecMY6HfKXkHs743aD8gSRqxF6T67MObXFuTcXsykDyoY5R4UPfMdJyEeAMFoJub1TgB9u5_nIyW_GUGrSQR5_hdFObp3CW826mfYJ",
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAVslq8tsgj8uts3gs_Tz1Pjo5c0aTtl6DboAUDAy2oT-pwYpe2H5MR1sKC5LyzG7R70r56zsmn1hi5sLMSfO8UJ7z6kGSrTTJiiWp38wmCvGRfcnKxjozoMSWuIuY-s-x_pvx7KfpHzb7u3l5a0IsUWWhYrzfnNnMR7_-Q0aM3VGIU8rAHwZFpHHveEPZYbRqGiCSh0cS8tXgx1UF5xTSuZYECLkGSBOW2OAG--DdvFAnQWEP_w-OeiZuk6KxvGXpG3xoG15xm9DfN",
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAQXRybg3DD09pgIkPCfdFmbxAFOe9P-i-HX0wyEYbPywatrRLdA26s4Xy2GpBmCTp2edzpcndADnZnVmIUGOoezeKjetZYalCyboGQ4XhtW7x8FAWePcwGEze7DSTMM9FxL2ZIG_77HtCMscNtfButSohBxpzIkPDst_D0UKfk4GKNrnbz1zq65XBAAMwC0J85gdEblrsVjzs1O02pG1Y6KR3C2ugb4cIt42wUVG6L477l6Tdmc1M4p_Zk2agnC9l9rx3isg0E5yPL"
+    ]
   };
+
+  const [mainImage, setMainImage] = useState(product.image);
 
   const handleAddToCart = () => {
     if (!selectedSize) return alert("Please select a size");
@@ -36,23 +44,20 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
           <div className="aspect-[4/5] bg-surface-container overflow-hidden">
             <img 
               alt="Oversized Boxy Hoodie Main" 
-              className="w-full h-full object-cover" 
-              src={product.image} 
+              className="w-full h-full object-cover transition-opacity duration-300" 
+              src={mainImage} 
             />
           </div>
           <div className="grid grid-cols-4 gap-4">
-            <div className="aspect-square bg-surface-container overflow-hidden opacity-100 ring-1 ring-primary">
-              <img alt="Hoodie view 1" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBrWbC4-NQ5NnMYBl3NgHFdaa0LdIf0RqqH6-dgFFRyG6rdcuHc8PE4bQL2xUSxZ_XaMYTnCSURrHoFC2HjfudG9v5h6Go_LVbxKgIPUD8wjdhg_UXJffTGsW8JtO8FEIo8KZhQsFghLstlgqZr-XV2gRB9VXU02DFMrGlhAUZecMY6HfKXkHs743aD8gSRqxF6T67MObXFuTcXsykDyoY5R4UPfMdJyEeAMFoJub1TgB9u5_nIyW_GUGrSQR5_hdFObp3CW826mfYJ"/>
-            </div>
-            <div className="aspect-square bg-surface-container overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
-              <img alt="Hoodie view 2" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVslq8tsgj8uts3gs_Tz1Pjo5c0aTtl6DboAUDAy2oT-pwYpe2H5MR1sKC5LyzG7R70r56zsmn1hi5sLMSfO8UJ7z6kGSrTTJiiWp38wmCvGRfcnKxjozoMSWuIuY-s-x_pvx7KfpHzb7u3l5a0IsUWWhYrzfnNnMR7_-Q0aM3VGIU8rAHwZFpHHveEPZYbRqGiCSh0cS8tXgx1UF5xTSuZYECLkGSBOW2OAG--DdvFAnQWEP_w-OeiZuk6KxvGXpG3xoG15xm9DfN"/>
-            </div>
-            <div className="aspect-square bg-surface-container overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
-              <img alt="Hoodie view 3" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQXRybg3DD09pgIkPCfdFmbxAFOe9P-i-HX0wyEYbPywatrRLdA26s4Xy2GpBmCTp2edzpcndADnZnVmIUGOoezeKjetZYalCyboGQ4XhtW7x8FAWePcwGEze7DSTMM9FxL2ZIG_77HtCMscNtfButSohBxpzIkPDst_D0UKfk4GKNrnbz1zq65XBAAMwC0J85gdEblrsVjzs1O02pG1Y6KR3C2ugb4cIt42wUVG6L477l6Tdmc1M4p_Zk2agnC9l9rx3isg0E5yPL"/>
-            </div>
-            <div className="aspect-square bg-surface-container overflow-hidden opacity-50 hover:opacity-100 transition-opacity cursor-pointer">
-              <img alt="Hoodie view 4" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6wicC7-3f-AM0IZxFlzJ2dUR8Op-W3SZ5rHI9ByO-qk0vdJ-9l3rcQ-bxM39Zui0XZbQX7GrYKTbqhYBuoUupgKMh2RkmqWyw7s_TPB_sdBEOjZT6GH2Ud2AiVrWoCjAvY5s6l5mhgFjREm1MU0PsEE7Tp0peBK8aNBI5ajFQx1ZjCejdAcbxsBxNWrSV-aVCzk4L5nVA6lP5ayH_z8RyOBpmJLVjkTzivqg-kynxbEczhZIVCz2NCilt5bj5Ss60xNxkciC6vlAL"/>
-            </div>
+            {product.gallery.map((imgUrl, idx) => (
+              <div 
+                key={idx}
+                onClick={() => setMainImage(imgUrl)}
+                className={`aspect-square bg-surface-container overflow-hidden cursor-pointer transition-all duration-300 ${mainImage === imgUrl ? 'opacity-100 ring-2 ring-primary' : 'opacity-50 hover:opacity-100'}`}
+              >
+                <img alt={`Hoodie view ${idx + 1}`} className="w-full h-full object-cover" src={imgUrl}/>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -76,7 +81,7 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
             <div>
               <div className="flex justify-between items-center mb-4">
                 <span className="font-label text-[0.6875rem] uppercase tracking-widest">SIZE</span>
-                <span className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary underline cursor-pointer hover:text-primary transition-colors">SIZE GUIDE</span>
+                <span onClick={() => alert("Size Guide Modal will open here. Measurements available: Chest, Length, Shoulders.")} className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary underline cursor-pointer hover:text-primary transition-colors">SIZE GUIDE</span>
               </div>
               <div className="grid grid-cols-4 gap-2">
                 {["S", "M", "L", "XL"].map((size) => (
@@ -131,7 +136,7 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
           <Link href="#" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary hover:text-primary transition-colors">VIEW ALL</Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="group cursor-pointer">
+          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="Raw Denim" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIC20oD3rcRZ-AEogjwmpX6eO9l97ocAeZv4RLOdzqT0Xy23tadyjgXPUkkE47ZZW1cUqGeo5Vu2cZagfl9UAxKoLQ9iNkHVasWepOp9zwkr34oAAUdcSmIkdNsB_cWlHbBfe6n6XiNyA23XYjX9ytOLMtP8g66xQw2W-2Xa_1KliRIaT9DINOH3wrGudITp-LjgIeZUrQ8lAu5TYsNU2cqugh-w9BpD_ofjPaMtOpvjJWT_qCTREhHd0g9mF0aIiIjSj4Sfxx8JsC"/>
             </div>
@@ -139,9 +144,9 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">RAW SELVEDGE DENIM</span>
               <span className="font-label text-[0.6875rem] text-secondary">$180.00</span>
             </div>
-          </div>
+          </Link>
           
-          <div className="group cursor-pointer">
+          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="White Tee" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8S2FT66s_J4xM4m8aSXXaXCqtTluP83i_AGUcLGCrSNwvlzCD33wSgQ_gIZRVextiDuUr7y1nR653Bh6c_EMUcq19-qhR75LMbV2dWrAeGdsuJaXnNmZJkheiiJaFpHj_Y504GmHYHrakarrYNk57rCTr6exF8bwv19wfTt27BEVc6VYV5xKSrcI5W9IMw6gYnSu2IUqEulbz81urN8NuS8LmGPN0-s8i_B6GWgaTKwQ3uAGU1YtaF2ymQb3JQL_XE0yL52VtT57x"/>
             </div>
@@ -149,9 +154,9 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">HEAVYWEIGHT TEE</span>
               <span className="font-label text-[0.6875rem] text-secondary">$65.00</span>
             </div>
-          </div>
+          </Link>
           
-          <div className="group cursor-pointer">
+          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="Wool Coat" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVq5eC6E965eUIiLE5ftPwIcWKH_rFoPuvIjX_wyYR61gLMhjCJF5ICEp1e6sP3UU2lnR5k249RD51AftIUjimQamkdST_DoPih05-69G83M3O3oQJYJzpYvkYuxD4caBJxVVbheai8ob5CK1uLCoZq2M7ci7QxKJQmiEdfJpPIwoGJ9VPDzNrn9gSC_abGemd2EhaUr37yv1TcYWX-gOmf6RDH7nlEq9hdjPzxI3VsCiKp2VwMWLuh38whgUz2J2ymu7JbuB24wLE"/>
             </div>
@@ -159,9 +164,9 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">STRUCTURED WOOL COAT</span>
               <span className="font-label text-[0.6875rem] text-secondary">$350.00</span>
             </div>
-          </div>
+          </Link>
           
-          <div className="group cursor-pointer">
+          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="Cargo Pants" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7KvM5GaAwHtg39OoBbHYohuzSKuvvKSrD3cZQtOsyWWL79Y0NSdrFt7LdUVlduVHLf3e8MFWhs_3JUrsdZKGnL3Sgl2R5qMbxbpWfYVov9cGh0rgazQT3ex0dq0EfEADpvX6-WfmJjP7s9DUwNS0qX29noMcJcv6XOCBzQC4TW8W5uKSpzvY66yu7CnEAvMjNSdh0cE1q3VEpuLaSFHpcMfGzxtUnlhPNwP9PphPnbN5GBRkWhTrZoSe9DDs3xtEEOsnBtJ0MToR9"/>
             </div>
@@ -169,7 +174,7 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">TECHNICAL CARGO PANT</span>
               <span className="font-label text-[0.6875rem] text-secondary">$145.00</span>
             </div>
-          </div>
+          </Link>
         </div>
       </section>
     </main>

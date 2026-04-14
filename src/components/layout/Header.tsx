@@ -13,10 +13,17 @@ export default function Header({ onOpenCart, onOpenSearch }: { onOpenCart: () =>
           />
         </Link>
       </div>
-      <div className="flex items-center space-x-8">
+      <div className="flex items-center gap-6">
+        <div className="hidden md:flex gap-8 items-center mr-4">
+          <Link href="/products" className="text-[#000000] font-bold text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">SHOP</Link>
+          <Link href="#" className="text-[#747878] text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">ARCHIVE</Link>
+          <Link href="#" className="text-[#747878] text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">EDITORIAL</Link>
+        </div>
+        <div className="flex items-center space-x-8">
         <button onClick={onOpenSearch} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150" style={{fontSize: '32px'}}>search</button>
         <Link href="/login" className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center" style={{fontSize: '32px'}}>person</Link>
         <button onClick={onOpenCart} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150" style={{fontSize: '32px'}}>shopping_bag</button>
+        </div>
       </div>
     </header>
   );
