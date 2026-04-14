@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary": "#000000",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-high": "#e8e8e8",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#5f5e5e",
+                        "secondary-container": "#e2e2e2",
+                        "tertiary-fixed": "#e3e2e2",
+                        "secondary-fixed-dim": "#c6c6c6",
+                        "inverse-primary": "#c8c6c5",
+                        "secondary-fixed": "#e2e2e2",
+                        "on-primary": "#ffffff",
+                        "on-primary-container": "#858383",
+                        "error-container": "#ffdad6",
+                        "surface-container-low": "#f3f3f3",
+                        "tertiary-container": "#1a1c1c",
+                        "outline-variant": "#c4c7c7",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary-container": "#838484",
+                        "on-surface": "#1a1c1c",
+                        "primary-container": "#1c1b1b",
+                        "secondary": "#5e5e5e",
+                        "background": "#f9f9f9",
+                        "on-secondary-container": "#646464",
+                        "tertiary-fixed-dim": "#c6c6c6",
+                        "primary": "#000000",
+                        "outline": "#747878",
+                        "on-tertiary-fixed-variant": "#464747",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#e5e2e1",
+                        "on-secondary-fixed": "#1b1b1b",
+                        "on-surface-variant": "#444748",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "error": "#ba1a1a",
+                        "on-background": "#1a1c1c",
+                        "on-error-container": "#93000a",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "surface-dim": "#dadada",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed-variant": "#474747",
+                        "surface-bright": "#f9f9f9",
+                        "surface": "#f9f9f9",
+                        "on-primary-fixed-variant": "#474746"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9f9f9;
+            color: #1a1c1c;
+        }
+        .serif-italic {
+            font-family: 'Noto Serif', serif;
+            font-style: italic;
+        }
+        .serif-display {
+            font-family: 'Noto Serif', serif;
+        }
+        
+        /* Smooth Entrance Animations */
+        @keyframes fade-up-slide {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.33, 1, 0.68, 1), transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        .reveal-on-scroll.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero Carousel specific styles */
+        .hero-slide {
+            opacity: 0;
+            transition: opacity 1.5s cubic-bezier(0.33, 1, 0.68, 1);
+            z-index: 10;
+        }
+        .hero-slide.active {
+            opacity: 1;
+            z-index: 20;
+        }
+        
+        /* Ken Burns Effect */
+        @keyframes ken-burns {
+            0% { transform: scale(1.1); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .hero-slide-img {
+            transform: scale(1.1);
+        }
+        .hero-slide.active .hero-slide-img {
+            animation: ken-burns 10s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+        }
+
+        .stagger-in { opacity: 0; transform: translateY(20px); }
+        .hero-slide.active .stagger-in {
+            animation: fade-up-slide 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+        }
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* Hover Zoom */
+        .hover-zoom-img {
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hover-zoom-container:hover .hover-zoom-img {
+            transform: scale(1.08);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- TopAppBar -->
+<header class="sticky top-0 flex justify-between items-center px-6 py-4 w-full bg-[#F9F9F9] dark:bg-[#1A1C1C] z-50">
+<div class="flex items-center gap-4">
+<img alt="UPPERMOON" class="w-auto object-contain dark:invert h-16" src="https://lh3.googleusercontent.com/aida/ADBb0uhF5kIfV9gzcMRvQPhk50wiBWkXNPRlAYIrnW4rZlbQ-bLba2OC-Qr-6_AzWpzoJ2qfMJJ_CfmwUKxWcNbE0DQO9CCeWf1MNRwMiFrVHqnlIkWeTTUmv5rCdNJyMG5S4APK3zONIe-wRVZ-UDWDlun8yPIYRxrNoHufUq1FZcRcJAqWGu3o7vdtqZUeM6gHnP4LaTig3mK55IkDzP33OpQ8wVjw36DXmohEb4A0Mb9i_lv60g2pUhe8rB7cbmoWhcRRSOCh0vQwpg"/>
+</div>
+<div class="flex items-center space-x-8">
+<button class="material-symbols-outlined text-[#000000] dark:text-[#FFFFFF] hover:opacity-70 transition-opacity duration-150" data-icon="search" style="font-size: 40px;">search</button>
+<button class="material-symbols-outlined text-[#000000] dark:text-[#FFFFFF] hover:opacity-70 transition-opacity duration-150" data-icon="person" style="font-size: 40px;">person</button>
+<button class="material-symbols-outlined text-[#000000] dark:text-[#FFFFFF] hover:opacity-70 transition-opacity duration-150" data-icon="shopping_bag" style="font-size: 40px;">shopping_bag</button>
+</div>
+</header>
+<main>
+<!-- Hero Slider Section -->
+<section class="relative h-[90vh] md:h-screen w-full overflow-hidden bg-black" id="hero-slider">
+<!-- Slide 1 -->
+<div class="hero-slide absolute inset-0 w-full h-full active" data-slide="0">
+<div class="absolute inset-0 w-full h-full overflow-hidden">
+<img alt="UPPERMOON Hero Slide 1" class="hero-slide-img absolute inset-0 w-full h-full object-cover grayscale brightness-[0.4]" src="https://lh3.googleusercontent.com/aida/ADBb0ugLk57sff8RvCUoeT49daC0hOUu7iRw3TjvU2dMCstYbxEq738JWb7bBaYI9DPXenyjKmzIKdiuR1uf2I9jm4DxUEg29Ce64Tohg3QgasYD5RU8s5n_aXKZaM-5iGPLozdKSNhxPjbKOj5MYU86uT_0jU9kLQugmuy4P_CjMNvnUDLqq-B3QoEjVvsdslZrGUxRHevAofiGglE7TudHQadgFooTIg5TPacksJLtrkhIcsoc1QMWJ26irWP-kZee5Sk8hH7qIaDl0ps"/>
+</div>
+<div class="absolute inset-x-0 bottom-24 z-20 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
+<div class="flex flex-col items-center pointer-events-auto">
+<span class="stagger-in delay-2 text-white text-[0.6875rem] font-bold tracking-[0.4em] uppercase opacity-90 mb-6 drop-shadow-md">NEW ARRIVALS</span>
+<button class="stagger-in delay-3 bg-white text-black px-12 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#EEEEEE] transition-colors duration-200 shadow-lg">
+<span class="border-b-2 border-black pb-1">DISCOVER NOW</span>
+</button>
+</div>
+</div>
+<div class="absolute bottom-12 left-12 z-30 hidden md:block">
+<span class="text-white/40 text-[0.625rem] tracking-[0.3em] uppercase">Autumn / Winter Series</span>
+</div>
+</div>
+<!-- Slide 2 -->
+<div class="hero-slide absolute inset-0 w-full h-full" data-slide="1">
+<div class="absolute inset-0 w-full h-full overflow-hidden">
+<img alt="UPPERMOON Hero Slide 2" class="hero-slide-img absolute inset-0 w-full h-full object-cover grayscale brightness-[0.4]" src="https://lh3.googleusercontent.com/aida/ADBb0uhzCX9_9OSmzZ2310-SnyANX5gPDBVtfLoyrFKYc29pLqd22LosjJfwW0G7emVshOWRD-Rg2ned6lzV-ALgpdYB9hoBHPQC-GvY8SNlf2J3nYFFqJgTUekCeQgDZF3shEcR7IwEuuCT_R8lgoKJvjVSk3GorbqoSL06SUGpcLCaejb7tAy_9EBuXbTt2OHEob1do_aTqWJ18J7_-vV7k2ITZLwEL4wNP25l9Y9cNw1sQgRDn_6qzkKLWLiOEYkEN7jw55bnfV8izQ"/>
+</div>
+<div class="absolute inset-x-0 bottom-24 z-20 flex flex-col items-center justify-center text-center px-4 pointer-events-none">
+<div class="flex flex-col items-center pointer-events-auto">
+<span class="stagger-in delay-2 text-white text-[0.6875rem] font-bold tracking-[0.4em] uppercase opacity-90 mb-6 drop-shadow-md">EXCLUSIVE DROP</span>
+<button class="stagger-in delay-3 bg-white text-black px-12 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#EEEEEE] transition-colors duration-200 shadow-lg">
+<span class="border-b-2 border-black pb-1">DISCOVER NOW</span>
+</button>
+</div>
+</div>
+<div class="absolute bottom-12 left-12 z-30 hidden md:block">
+<span class="text-white/40 text-[0.625rem] tracking-[0.3em] uppercase">Creative Performance</span>
+</div>
+</div>
+<!-- Slider Indicators -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center space-x-3">
+<button aria-label="Slide 1" class="hero-indicator w-12 h-0.5 bg-white transition-opacity duration-300" onclick="goToSlide(0)"></button>
+<button aria-label="Slide 2" class="hero-indicator w-12 h-0.5 bg-white/30 transition-opacity duration-300" onclick="goToSlide(1)"></button>
+</div>
+</section>
+<!-- Best Sellers -->
+<section class="bg-[#EEEEEE] py-24 px-6 md:px-12">
+<div class="max-w-7xl mx-auto">
+<div class="mb-16 flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-on-scroll">
+<div>
+<span class="text-[0.6875rem] font-medium tracking-[0.2em] uppercase text-outline mb-4 block">CURATED SELECTION</span>
+<h2 class="serif-display text-4xl md:text-5xl font-bold tracking-tight text-on-surface">Browse Our Best Selling Products</h2>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0.5 bg-outline/10">
+<!-- Product Card 1 -->
+<div class="bg-surface-container-lowest group cursor-pointer p-6 reveal-on-scroll" style="transition-delay: 0.1s;">
+<div class="aspect-square overflow-hidden mb-6 bg-surface-container">
+<img alt="minimalist charcoal grey oversized hoodie" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDN7ELpfys-dndu-RhSuD3pcdQrS8I3xiiDYyWI2PN8VRGZK4N5bYFw_dX9Lo_CCZnTHHeI8vIY1wNu3rpNBGjksYsrIMKDPYINfagFtNQc9SqTvoY3tywVobN8Ho_pmDtbh3eSgJ5o6zwzxW3NSfSWOl5VCn150JRcTw-wsI4zlxsywfhcSamymnUP0lY9zWolA0GR6bfC_0mIJnriHR_wSTM2DEnafEdNQUrQwuiRyjwPOmFdMtcpbbpRUl9MuKJUyr0pG7r1e8jk"/>
+</div>
+<div class="space-y-2">
+<p class="text-[0.6875rem] tracking-widest uppercase text-outline">OUTERWEAR</p>
+<h3 class="font-bold text-sm tracking-tight">ARCHITECTURAL HOODIE / CHARCOAL</h3>
+<p class="text-xs font-medium text-on-surface-variant">$185.00</p>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-surface-container-lowest group cursor-pointer p-6 reveal-on-scroll" style="transition-delay: 0.2s;">
+<div class="aspect-square overflow-hidden mb-6 bg-surface-container">
+<img alt="premium white organic cotton t-shirt" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBtyd6it8MW0BLgNrWOJcnZx3PAEX2fa4DP44bDijjCZSeUdR2b4Lo1nUYSH_Ib8eGoQTwIvyesZzRxowM4fDIZspAUfqMmxsEsSnwg3jzOwuB3nBR12d5M3q2Qt1jQQGcYLWUbOkWi8sfwVlCsrGtKGUqxMsp_1xg13q7Q3KxhzWhkqB9gSbcnQW79XsNougHtXGwHiK7rVlPEVyAW4TiJ5RW3UiAjFZVmmYseu7OE2pLbLNqS_PxFBWzljurgyd_RYHb9UA4HNLY"/>
+</div>
+<div class="space-y-2">
+<p class="text-[0.6875rem] tracking-widest uppercase text-outline">TOPS</p>
+<h3 class="font-bold text-sm tracking-tight">ESSENTIAL BOX TEE / OPTIC WHITE</h3>
+<p class="text-xs font-medium text-on-surface-variant">$85.00</p>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-surface-container-lowest group cursor-pointer p-6 reveal-on-scroll" style="transition-delay: 0.3s;">
+<div class="aspect-square overflow-hidden mb-6 bg-surface-container">
+<img alt="technical black cargo pants" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRHPa6Lwk-f4RMG_8tqMxMeNaw4lSCkqQaV4QdZrdmOqLRTt_3GB3XZ00VoFlqNJwohODfwzaqlZ-SQeV0Hm8-7HhPQ9T4xQoUWe7kErKmAM-wZL9BsDITuA6HUvURg3VOpTfbJHEDPokYn6FjZG0dD0CZIJgPcBtOEeVXCZAkAMThmBY7DyHFabl_cGyYU9342pSk49rZFzN5ioNtoA21i1ZvdO64EDcQAD6i4YcOW153AjWh2flt67JJMsqiPjDuWnh-ICWQFOrd"/>
+</div>
+<div class="space-y-2">
+<p class="text-[0.6875rem] tracking-widest uppercase text-outline">BOTTOMS</p>
+<h3 class="font-bold text-sm tracking-tight">STRUCTURAL CARGO PANTS / NOIR</h3>
+<p class="text-xs font-medium text-on-surface-variant">$240.00</p>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-surface-container-lowest group cursor-pointer p-6 reveal-on-scroll" style="transition-delay: 0.4s;">
+<div class="aspect-square overflow-hidden mb-6 bg-surface-container">
+<img alt="beige heavyweight sweatshirt" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBAfdxCuFDFg2nC84fDF8gEQdI6h32R2ZvcYBi8Fo0Xme7rFqc61Et2HD2ezm80qxcIQhaG9EFUv69HD7hUaaytU3EdHnhs9F37WTEaEUFMxLqfpKRORvBiqMSLLFFssD8Rq-jB1axuJdcLdJfVQ0nUubFL3him_PLboWVUz7nZ_eCaGRnozBcBxa34YjVZ6i_rer_xfYZcFuWGO5OtA-dTdRdghA2ZDU9Gt8yYXDiaTufSKVRF9cp9pawK6wZsatT8QiRPBlTB69i"/>
+</div>
+<div class="space-y-2">
+<p class="text-[0.6875rem] tracking-widest uppercase text-outline">OUTERWEAR</p>
+<h3 class="font-bold text-sm tracking-tight">SCULPTED SWEATSHIRT / SAND</h3>
+<p class="text-xs font-medium text-on-surface-variant">$160.00</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- View All Section -->
+<section class="py-16 bg-surface flex flex-col items-center justify-center border-t border-surface-container reveal-on-scroll">
+<span class="serif-italic text-4xl md:text-5xl text-on-surface-variant mb-6">View all</span>
+<a class="text-[0.6875rem] font-bold tracking-[0.3em] uppercase border-b-2 border-on-surface pb-1 hover:opacity-70 transition-opacity" href="#">
+                VIEW ALL PRODUCTS
+            </a>
+</section>
+<!-- Community Section -->
+<section class="py-24 px-6 md:px-12 bg-surface">
+<div class="max-w-7xl mx-auto">
+<div class="text-center mb-16 reveal-on-scroll">
+<h2 class="serif-italic text-5xl md:text-7xl mb-4">Community</h2>
+<p class="text-[0.6875rem] tracking-[0.2em] uppercase text-outline">Tag @uppermoon to get featured</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="aspect-[3/4] overflow-hidden bg-surface-container reveal-on-scroll hover-zoom-container" style="transition-delay: 0.1s;">
+<img alt="lifestyle urban gallery streetwear" class="w-full h-full object-cover hover-zoom-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh0eCQWcJLI_RaE2OhZt4aMJ4enrfc8L-md_tZA4ZodK6M1_ON2X0U5YJ7SsowZH9NHVfSyCS5QXP1KpNuKztpWLn1ofQA6PpIIE_HHpbKEiU4enx6at5xjWihC6kxTUnDGsqckU2_zMMyaIDQtlCxFwJUuvw54Vlqs4vAKRUmZYsAlnYKshV9F-wAFHr2pHLiHquk559xYLfd0pJPyiRiUFX6WNjT1lsCAOPZXTJHqyTqbUlgM5t2FjvnsdqzfPYJJicUjLo6IXt8"/>
+</div>
+<div class="aspect-[3/4] overflow-hidden bg-surface-container md:mt-12 reveal-on-scroll hover-zoom-container" style="transition-delay: 0.3s;">
+<img alt="editorial fashion brutalist wall" class="w-full h-full object-cover hover-zoom-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDDGzZQ3tRt0uyxcSIewtbRr1_Yut86w0ADHh6YhYL6CvZVfCfJhFlL1nDXL0kCm2h-kHlhjPFNth0zzRLqqOHnkEkuh28Xd0KOjQMklyGmtDvfPuLnDCcy7MMh8bAXbpXMA34CCYG3O_VsoD2iNAvLbrAheJ3e5oBd0DuOQXYIu-Yt-a1QV6p-GzBPfYIQori_TP5q6CMMArAlYSprBbY2d6Ba_KnPZtXpH-epdpYlb3I6TWVXKlFPl5t3LQnmkJtcHe-Lxn821ZA"/>
+</div>
+<div class="aspect-[3/4] overflow-hidden bg-surface-container reveal-on-scroll hover-zoom-container" style="transition-delay: 0.5s;">
+<img alt="street style technical gear" class="w-full h-full object-cover hover-zoom-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuChIHvtJUfTD1gewJX3_-WCVjEdvE3GZ2nA946f32jZD7RKUKJSWgCHOanh0Bpd9AAosA1bWJfniDaX6_LAV31921RhAIW_eRLiFyD0xOCdOjxxwjwEUsGHoYFtrAmC4773D4yuCmCFwaBoAY0NXUycPYQI3oPKIk3q0LP61QAvQbFmpR63p9WAGCexVQ9K5uzJP_G__almd9IdtZ8JvMMDxzuqg4ImvrqSpvnOjeZS-iyMElTZYWjSBSfUJdsGhD9kVPhucn9cazlX"/>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-12 px-6 flex flex-col items-center justify-center space-y-4 bg-[#EEEEEE] dark:bg-[#121212] reveal-on-scroll">
+<div class="flex space-x-8 mb-8">
+<a class="text-[0.6875rem] tracking-widest uppercase font-bold text-[#747878] dark:text-[#909393] hover:text-[#000000] dark:hover:text-[#FFFFFF]" href="#">Instagram</a>
+<a class="text-[0.6875rem] tracking-widest uppercase font-bold text-[#747878] dark:text-[#909393] hover:text-[#000000] dark:hover:text-[#FFFFFF]" href="#">Twitter</a>
+<a class="text-[0.6875rem] tracking-widest uppercase font-bold text-[#747878] dark:text-[#909393] hover:text-[#000000] dark:hover:text-[#FFFFFF]" href="#">Newsletter</a>
+</div>
+<p class="text-[0.6875rem] tracking-widest uppercase text-[#747878] dark:text-[#909393]">
+            © UPPERMOON. ALL RIGHTS RESERVED.
+        </p>
+</footer>
+<script>
+        // Hero Slider Logic
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.hero-slide');
+        const indicators = document.querySelectorAll('.hero-indicator');
+        const totalSlides = slides.length;
+
+        function goToSlide(index) {
+            slides[currentSlide].classList.remove('active');
+            indicators[currentSlide].classList.replace('bg-white', 'bg-white/30');
+            
+            currentSlide = index;
+            
+            slides[currentSlide].classList.add('active');
+            indicators[currentSlide].classList.replace('bg-white/30', 'bg-white');
+        }
+
+        function nextSlide() {
+            let next = (currentSlide + 1) % totalSlides;
+            goToSlide(next);
+        }
+
+        // Auto play slider
+        setInterval(nextSlide, 8000);
+
+        // Intersection Observer to handle reveal-on-scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Trigger animations for elements already in view on load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight) {
+                    el.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body></html>

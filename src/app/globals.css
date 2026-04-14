@@ -1,26 +1,98 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --color-tertiary: #000000;
+  --color-inverse-on-surface: #f1f1f1;
+  --color-surface-container-high: #e8e8e8;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-tint: #5f5e5e;
+  --color-secondary-container: #e2e2e2;
+  --color-tertiary-fixed: #e3e2e2;
+  --color-secondary-fixed-dim: #c6c6c6;
+  --color-inverse-primary: #c8c6c5;
+  --color-secondary-fixed: #e2e2e2;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #858383;
+  --color-error-container: #ffdad6;
+  --color-surface-container-low: #f3f3f3;
+  --color-tertiary-container: #1a1c1c;
+  --color-outline-variant: #c4c7c7;
+  --color-inverse-surface: #2f3131;
+  --color-on-secondary: #ffffff;
+  --color-surface-container: #eeeeee;
+  --color-surface-variant: #e2e2e2;
+  --color-on-tertiary-container: #838484;
+  --color-on-surface: #1a1c1c;
+  --color-primary-container: #1c1b1b;
+  --color-secondary: #5e5e5e;
+  --color-background: #f9f9f9;
+  --color-on-secondary-container: #646464;
+  --color-tertiary-fixed-dim: #c6c6c6;
+  --color-primary: #000000;
+  --color-outline: #747878;
+  --color-on-tertiary-fixed-variant: #464747;
+  --color-on-primary-fixed: #1c1b1b;
+  --color-on-error: #ffffff;
+  --color-primary-fixed: #e5e2e1;
+  --color-on-secondary-fixed: #1b1b1b;
+  --color-on-surface-variant: #444748;
+  --color-surface-container-highest: #e2e2e2;
+  --color-on-tertiary-fixed: #1a1c1c;
+  --color-error: #ba1a1a;
+  --color-on-background: #1a1c1c;
+  --color-on-error-container: #93000a;
+  --color-primary-fixed-dim: #c8c6c5;
+  --color-surface-dim: #dadada;
+  --color-on-tertiary: #ffffff;
+  --color-on-secondary-fixed-variant: #474747;
+  --color-surface-bright: #f9f9f9;
+  --color-surface: #f9f9f9;
+  --color-on-primary-fixed-variant: #474746;
+  --font-headline: Noto Serif;
+  --font-body: Inter;
+  --font-label: Inter;
+
+  --animate-ken-burns: ken-burns 10s cubic-bezier(0.33, 1, 0.68, 1) forwards;
+  --animate-fade-up-slide: fade-up-slide 0.8s cubic-bezier(0.33, 1, 0.68, 1) forwards;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+@keyframes ken-burns {
+    0% { transform: scale(1.1); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@keyframes fade-up-slide {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@layer base {
+  body {
+    @apply bg-surface text-on-surface antialiased;
+    font-family: var(--font-body), sans-serif;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .reveal-on-scroll {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.33, 1, 0.68, 1), transform 0.8s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .reveal-on-scroll.active {
+      opacity: 1;
+      transform: translateY(0);
+  }
 }
