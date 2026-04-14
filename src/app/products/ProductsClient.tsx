@@ -18,7 +18,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
   const { formatPrice, currency } = useCart();
   const [selectedCategory, setSelectedCategory] = useState("ALL");
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
-  const [priceRange, setPriceRange] = useState(1000);
+  const [priceRange, setPriceRange] = useState(20000000);
   const [sortBy, setSortBy] = useState("NEWEST");
 
   // Filter Logic
@@ -95,15 +95,15 @@ export default function ProductsClient({ products }: { products: Product[] }) {
               <input 
                 type="range" 
                 min="0" 
-                max="1000" 
-                step="50"
+                max="20000000" 
+                step="500000"
                 value={priceRange}
                 onChange={(e) => setPriceRange(Number(e.target.value))}
                 className="w-full accent-black h-1 bg-surface-container cursor-pointer" 
               />
               <div className="flex justify-between text-[10px] font-medium tracking-tighter">
                 <span>{formatPrice(0)}</span>
-                <span>{formatPrice(1000)}</span>
+                <span>{formatPrice(20000000)}</span>
               </div>
             </div>
           </section>
@@ -148,7 +148,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
               <h3 className="font-headline text-2xl text-on-surface mb-2">No items found</h3>
               <p className="font-label text-xs tracking-widest uppercase text-outline">Try adjusting your filters</p>
               <button 
-                onClick={() => {setSelectedCategory("ALL"); setPriceRange(1000); setSelectedSize(null);}}
+                onClick={() => {setSelectedCategory("ALL"); setPriceRange(20000000); setSelectedSize(null);}}
                 className="mt-6 border-b border-primary text-[10px] font-bold tracking-widest uppercase hover:opacity-70"
               >
                 CLEAR FILTERS

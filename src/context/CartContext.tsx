@@ -24,7 +24,7 @@ interface CartContextType {
   cartTotal: number;
   currency: "USD" | "IDR";
   setCurrency: (c: "USD" | "IDR") => void;
-  formatPrice: (usdPrice: number) => string;
+  formatPrice: (price: number) => string;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -34,12 +34,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [currency, setCurrency] = useState<"USD" | "IDR">("USD");
 
-  const formatPrice = (usdPrice: number) => {
-    if (currency === "IDR") {
+  const formatPrice = (price: number) => {
+    if (currency === "USD") {
       // Assuming 1 USD = 15,500 IDR
-      return `Rp ${(usdPrice * 15500).toLocaleString('id-ID')}`;
+      return `$${(price / 15500).toFixed(2)}`;
     }
-    return `$${usdPrice.toFixed(2)}`;
+    return `Rp ${price.toLocaleString('id-ID')}`;
   };
 
   const openCart = () => setIsCartOpen(true);

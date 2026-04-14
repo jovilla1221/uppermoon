@@ -274,15 +274,14 @@ export default function AdminPage() {
                 />
               </div>
               <div>
-                <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">Harga (USD) *</label>
+                <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">Harga (IDR) *</label>
                 <input
                   required
                   type="number"
-                  step="0.01"
                   value={form.price}
                   onChange={(e) => setForm({ ...form, price: e.target.value })}
                   className="w-full bg-black border border-neutral-700 text-white px-4 py-3 text-sm focus:outline-none focus:border-white transition-colors"
-                  placeholder="120.00"
+                  placeholder="150000"
                 />
               </div>
               <div>
@@ -402,7 +401,7 @@ export default function AdminPage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="text-sm font-bold tracking-tight truncate">{p.name}</h3>
                   <div className="flex items-center gap-3 mt-1">
-                    <span className="text-xs text-neutral-400">${p.price?.toFixed(2)}</span>
+                    <span className="text-xs text-neutral-400">Rp {p.price?.toLocaleString('id-ID')}</span>
                     <span className="text-[10px] text-neutral-600 uppercase tracking-widest">{p.category}</span>
                   </div>
                 </div>

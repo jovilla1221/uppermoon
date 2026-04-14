@@ -1,7 +1,7 @@
 export const allProducts = [
   {
     name: "ARCHETYPE SHELL JACKET",
-    price: 580.00,
+    price: 8990000,
     category: "OUTERWEAR",
     collection: "ARCHETYPE LINE",
     slug: "archetype-shell-jacket",
@@ -12,7 +12,7 @@ export const allProducts = [
   },
   {
     name: "MONOLITH HOODIE - CHALK",
-    price: 225.00,
+    price: 3487500,
     category: "TOPS",
     collection: "BLACK MONOLITH SERIES",
     slug: "monolith-hoodie-chalk",
@@ -23,7 +23,7 @@ export const allProducts = [
   },
   {
     name: "LINEAR WOOL TROUSERS",
-    price: 340.00,
+    price: 5270000,
     category: "BOTTOMS",
     collection: "ESSENTIALS",
     slug: "linear-wool-trousers",
@@ -34,7 +34,7 @@ export const allProducts = [
   },
   {
     name: "VOID RUNNER SNEAKER 01",
-    price: 410.00,
+    price: 6355000,
     category: "FOOTWEAR",
     collection: "FOOTWEAR",
     slug: "void-runner-sneaker-01",
@@ -45,7 +45,7 @@ export const allProducts = [
   },
   {
     name: "ESSENTIAL BOX TEE",
-    price: 85.00,
+    price: 1317500,
     category: "TOPS",
     collection: "ESSENTIALS",
     slug: "essential-box-tee",
@@ -56,7 +56,7 @@ export const allProducts = [
   },
   {
     name: "UTILITY CARGO SYSTEM",
-    price: 320.00,
+    price: 4960000,
     category: "BOTTOMS",
     collection: "TACTICAL LINE",
     slug: "utility-cargo-system",
@@ -67,7 +67,7 @@ export const allProducts = [
   },
   {
     name: "OBSIDIAN OVERCOAT",
-    price: 890.00,
+    price: 13795000,
     category: "OUTERWEAR",
     collection: "WINTER COLLECTION",
     slug: "obsidian-overcoat",
@@ -78,7 +78,7 @@ export const allProducts = [
   },
   {
     name: "STRUCTURAL LEATHER TOTE",
-    price: 450.00,
+    price: 6975000,
     category: "ACCESSORIES",
     collection: "LEATHER GOODS",
     slug: "structural-leather-tote",
@@ -89,7 +89,7 @@ export const allProducts = [
   },
   {
     name: "OVERSIZED BOXY HOODIE",
-    price: 120.00,
+    price: 1860000,
     category: "TOPS",
     collection: "BLACK MONOLITH SERIES",
     slug: "oversized-boxy-hoodie",
