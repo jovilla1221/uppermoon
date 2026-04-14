@@ -49,7 +49,7 @@ export default function HeroSlider() {
                 onClick={() => window.location.href = '/products'}
                 className={`bg-white text-black px-12 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-[#EEEEEE] transition-colors duration-200 shadow-lg ${currentSlide === idx ? 'animate-[fade-up-slide_0.8s_forwards] delay-300 opacity-0' : 'opacity-0'}`}
               >
-                <span className="border-b-2 border-black pb-1">DISCOVER NOW</span>
+                <span className="border-b-2 border-black pb-1">SHOP NOW</span>
               </button>
             </div>
           </div>

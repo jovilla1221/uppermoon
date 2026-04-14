@@ -7,6 +7,8 @@ import { allProductsQuery } from "@/sanity/lib/queries";
 import { allProducts as staticProducts } from "@/data/products";
 import BestSellersClient from "@/components/home/BestSellersClient";
 
+export const revalidate = 0;
+
 export default async function Home() {
   let products = [];
   try {

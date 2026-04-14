@@ -32,7 +32,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [currency, setCurrency] = useState<"USD" | "IDR">("USD");
+  const [currency, setCurrency] = useState<"USD" | "IDR">("IDR");
 
   const formatPrice = (price: number) => {
     if (currency === "USD") {
