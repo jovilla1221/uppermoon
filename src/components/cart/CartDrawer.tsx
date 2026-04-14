@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 
 export default function CartDrawer() {
-  const { isCartOpen, closeCart, cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
+  const { isCartOpen, closeCart, cartItems, removeFromCart, updateQuantity, cartTotal, formatPrice, currency } = useCart();
 
   if (!isCartOpen) return null;
 
@@ -21,7 +21,7 @@ export default function CartDrawer() {
           <div className="flex flex-col">
             <h2 className="font-headline italic text-2xl text-on-surface">YOUR BAG</h2>
             <span className="font-label text-[0.6875rem] uppercase tracking-[0.2em] text-outline mt-1">
-              ESTIMATED TOTAL: USD ${cartTotal.toFixed(2)}
+              ESTIMATED TOTAL: {currency} {formatPrice(cartTotal)}
             </span>
           </div>
           <button 
@@ -71,7 +71,7 @@ export default function CartDrawer() {
                         <span className="material-symbols-outlined text-xs">add</span>
                       </button>
                     </div>
-                    <span className="font-label text-sm text-on-surface">${(item.price * item.quantity).toFixed(2)}</span>
+                    <span className="font-label text-sm text-on-surface">{formatPrice(item.price * item.quantity)}</span>
                   </div>
                 </div>
               </div>
@@ -89,7 +89,7 @@ export default function CartDrawer() {
           <div className="space-y-3">
             <div className="flex justify-between items-center">
               <span className="font-label text-[0.6875rem] tracking-widest uppercase text-outline">SUBTOTAL</span>
-              <span className="font-body font-bold text-on-surface">${cartTotal.toFixed(2)}</span>
+              <span className="font-body font-bold text-on-surface">{formatPrice(cartTotal)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="font-label text-[0.6875rem] tracking-widest uppercase text-outline">SHIPPING</span>

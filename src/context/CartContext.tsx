@@ -22,6 +22,9 @@ interface CartContextType {
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, newQuantity: number) => void;
   cartTotal: number;
+  currency: "USD" | "IDR";
+  setCurrency: (c: "USD" | "IDR") => void;
+  formatPrice: (usdPrice: number) => string;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -29,6 +32,15 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [currency, setCurrency] = useState<"USD" | "IDR">("USD");
+
+  const formatPrice = (usdPrice: number) => {
+    if (currency === "IDR") {
+      // Assuming 1 USD = 15,500 IDR
+      return `Rp ${(usdPrice * 15500).toLocaleString('id-ID')}`;
+    }
+    return `$${usdPrice.toFixed(2)}`;
+  };
 
   const openCart = () => setIsCartOpen(true);
   const closeCart = () => setIsCartOpen(false);
@@ -62,7 +74,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ cartItems, isCartOpen, openCart, closeCart, addToCart, removeFromCart, updateQuantity, cartTotal }}>
+    <CartContext.Provider value={{ cartItems, isCartOpen, openCart, closeCart, addToCart, removeFromCart, updateQuantity, cartTotal, currency, setCurrency, formatPrice }}>
       {children}
       <CartDrawer />
     </CartContext.Provider>

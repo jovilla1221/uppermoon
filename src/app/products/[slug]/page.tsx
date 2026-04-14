@@ -1,28 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
+import { allProducts } from "@/data/products";
+import { notFound } from "next/navigation";
 
-export default function ProductDetail({ params }: { params: { slug: string } }) {
-  const { addToCart } = useCart();
+export default function ProductDetail({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = React.use(params);
+  const { addToCart, formatPrice } = useCart();
   const [selectedSize, setSelectedSize] = useState<string | null>("M");
   const [quantity, setQuantity] = useState(1);
 
-  const product = {
-    name: "OVERSIZED BOXY HOODIE",
-    price: 120.00,
-    collection: "BLACK MONOLITH SERIES",
-    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAHozJb72McCjTGaj21WdaDQQcMP7PgAeLwWR6uGeKNQtFahGplbh8VpGlPJALOwvEClYSY7WxPS-7c3XdXm66VsQ4yxNjEY4zF7HhYzAoa0xI7zxurJEXcrRQymTvkP-S43u_oDNLw6fonQ9YHh7lBfzEGb8JoPi6J3i5LuzY1ihEme8vpH0Iyaa91WSN1VGElL-r1pfMeDhv-tLPQ3VotXjoGWjT9I6-WIKOCBT8RtR1bdquQUVjy9E4JvjlmNMeNYdHdiU2zj-Kx",
-    gallery: [
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAHozJb72McCjTGaj21WdaDQQcMP7PgAeLwWR6uGeKNQtFahGplbh8VpGlPJALOwvEClYSY7WxPS-7c3XdXm66VsQ4yxNjEY4zF7HhYzAoa0xI7zxurJEXcrRQymTvkP-S43u_oDNLw6fonQ9YHh7lBfzEGb8JoPi6J3i5LuzY1ihEme8vpH0Iyaa91WSN1VGElL-r1pfMeDhv-tLPQ3VotXjoGWjT9I6-WIKOCBT8RtR1bdquQUVjy9E4JvjlmNMeNYdHdiU2zj-Kx",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBrWbC4-NQ5NnMYBl3NgHFdaa0LdIf0RqqH6-dgFFRyG6rdcuHc8PE4bQL2xUSxZ_XaMYTnCSURrHoFC2HjfudG9v5h6Go_LVbxKgIPUD8wjdhg_UXJffTGsW8JtO8FEIo8KZhQsFghLstlgqZr-XV2gRB9VXU02DFMrGlhAUZecMY6HfKXkHs743aD8gSRqxF6T67MObXFuTcXsykDyoY5R4UPfMdJyEeAMFoJub1TgB9u5_nIyW_GUGrSQR5_hdFObp3CW826mfYJ",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAVslq8tsgj8uts3gs_Tz1Pjo5c0aTtl6DboAUDAy2oT-pwYpe2H5MR1sKC5LyzG7R70r56zsmn1hi5sLMSfO8UJ7z6kGSrTTJiiWp38wmCvGRfcnKxjozoMSWuIuY-s-x_pvx7KfpHzb7u3l5a0IsUWWhYrzfnNnMR7_-Q0aM3VGIU8rAHwZFpHHveEPZYbRqGiCSh0cS8tXgx1UF5xTSuZYECLkGSBOW2OAG--DdvFAnQWEP_w-OeiZuk6KxvGXpG3xoG15xm9DfN",
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAQXRybg3DD09pgIkPCfdFmbxAFOe9P-i-HX0wyEYbPywatrRLdA26s4Xy2GpBmCTp2edzpcndADnZnVmIUGOoezeKjetZYalCyboGQ4XhtW7x8FAWePcwGEze7DSTMM9FxL2ZIG_77HtCMscNtfButSohBxpzIkPDst_D0UKfk4GKNrnbz1zq65XBAAMwC0J85gdEblrsVjzs1O02pG1Y6KR3C2ugb4cIt42wUVG6L477l6Tdmc1M4p_Zk2agnC9l9rx3isg0E5yPL"
-    ]
-  };
+  const product = allProducts.find((p) => p.slug === slug);
 
-  const [mainImage, setMainImage] = useState(product.image);
+  const [mainImage, setMainImage] = useState(product?.image || "");
+
+  // Update main image if product changes
+  useEffect(() => {
+    if (product) {
+      setMainImage(product.image);
+    }
+  }, [product]);
+
+  if (!product) {
+    return notFound();
+  }
 
   const handleAddToCart = () => {
     if (!selectedSize) return alert("Please select a size");
@@ -74,7 +77,7 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
           <h1 className="text-4xl md:text-5xl font-headline font-bold mb-4 tracking-tight leading-tight">
             {product.name}
           </h1>
-          <p className="text-xl font-body font-normal mb-10 text-on-surface">${product.price.toFixed(2)}</p>
+          <p className="text-xl font-body font-normal mb-10 text-on-surface">{formatPrice(product.price)}</p>
           
           {/* Selectors */}
           <div className="space-y-10">
@@ -136,43 +139,43 @@ export default function ProductDetail({ params }: { params: { slug: string } }) 
           <Link href="#" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary hover:text-primary transition-colors">VIEW ALL</Link>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
+          <Link href="/products/archetype-shell-jacket" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="Raw Denim" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIC20oD3rcRZ-AEogjwmpX6eO9l97ocAeZv4RLOdzqT0Xy23tadyjgXPUkkE47ZZW1cUqGeo5Vu2cZagfl9UAxKoLQ9iNkHVasWepOp9zwkr34oAAUdcSmIkdNsB_cWlHbBfe6n6XiNyA23XYjX9ytOLMtP8g66xQw2W-2Xa_1KliRIaT9DINOH3wrGudITp-LjgIeZUrQ8lAu5TYsNU2cqugh-w9BpD_ofjPaMtOpvjJWT_qCTREhHd0g9mF0aIiIjSj4Sfxx8JsC"/>
             </div>
             <div className="flex flex-col gap-1">
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">RAW SELVEDGE DENIM</span>
-              <span className="font-label text-[0.6875rem] text-secondary">$180.00</span>
+              <span className="font-label text-[0.6875rem] text-secondary">{formatPrice(180)}</span>
             </div>
           </Link>
           
-          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
+          <Link href="/products/essential-box-tee" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="White Tee" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8S2FT66s_J4xM4m8aSXXaXCqtTluP83i_AGUcLGCrSNwvlzCD33wSgQ_gIZRVextiDuUr7y1nR653Bh6c_EMUcq19-qhR75LMbV2dWrAeGdsuJaXnNmZJkheiiJaFpHj_Y504GmHYHrakarrYNk57rCTr6exF8bwv19wfTt27BEVc6VYV5xKSrcI5W9IMw6gYnSu2IUqEulbz81urN8NuS8LmGPN0-s8i_B6GWgaTKwQ3uAGU1YtaF2ymQb3JQL_XE0yL52VtT57x"/>
             </div>
             <div className="flex flex-col gap-1">
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">HEAVYWEIGHT TEE</span>
-              <span className="font-label text-[0.6875rem] text-secondary">$65.00</span>
+              <span className="font-label text-[0.6875rem] text-secondary">{formatPrice(65)}</span>
             </div>
           </Link>
           
-          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
+          <Link href="/products/obsidian-overcoat" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="Wool Coat" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVq5eC6E965eUIiLE5ftPwIcWKH_rFoPuvIjX_wyYR61gLMhjCJF5ICEp1e6sP3UU2lnR5k249RD51AftIUjimQamkdST_DoPih05-69G83M3O3oQJYJzpYvkYuxD4caBJxVVbheai8ob5CK1uLCoZq2M7ci7QxKJQmiEdfJpPIwoGJ9VPDzNrn9gSC_abGemd2EhaUr37yv1TcYWX-gOmf6RDH7nlEq9hdjPzxI3VsCiKp2VwMWLuh38whgUz2J2ymu7JbuB24wLE"/>
             </div>
             <div className="flex flex-col gap-1">
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">STRUCTURED WOOL COAT</span>
-              <span className="font-label text-[0.6875rem] text-secondary">$350.00</span>
+              <span className="font-label text-[0.6875rem] text-secondary">{formatPrice(350)}</span>
             </div>
           </Link>
           
-          <Link href="/products/oversized-boxy-hoodie" className="group cursor-pointer">
+          <Link href="/products/utility-cargo-system" className="group cursor-pointer">
             <div className="aspect-square bg-surface-container overflow-hidden mb-4 relative">
               <img alt="Cargo Pants" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7KvM5GaAwHtg39OoBbHYohuzSKuvvKSrD3cZQtOsyWWL79Y0NSdrFt7LdUVlduVHLf3e8MFWhs_3JUrsdZKGnL3Sgl2R5qMbxbpWfYVov9cGh0rgazQT3ex0dq0EfEADpvX6-WfmJjP7s9DUwNS0qX29noMcJcv6XOCBzQC4TW8W5uKSpzvY66yu7CnEAvMjNSdh0cE1q3VEpuLaSFHpcMfGzxtUnlhPNwP9PphPnbN5GBRkWhTrZoSe9DDs3xtEEOsnBtJ0MToR9"/>
             </div>
             <div className="flex flex-col gap-1">
               <span className="font-label text-[0.6875rem] uppercase tracking-widest text-primary">TECHNICAL CARGO PANT</span>
-              <span className="font-label text-[0.6875rem] text-secondary">$145.00</span>
+              <span className="font-label text-[0.6875rem] text-secondary">{formatPrice(145)}</span>
             </div>
           </Link>
         </div>

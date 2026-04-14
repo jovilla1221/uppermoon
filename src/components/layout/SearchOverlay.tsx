@@ -8,25 +8,18 @@ interface SearchOverlayProps {
   onClose: () => void;
 }
 
-const mockProducts = [
-  { name: "ARCHITECTURAL HOODIE / CHARCOAL", price: "$185.00", url: "/products/oversized-boxy-hoodie" },
-  { name: "ESSENTIAL BOX TEE / OPTIC WHITE", price: "$85.00", url: "/products/oversized-boxy-hoodie" },
-  { name: "STRUCTURAL CARGO PANTS / NOIR", price: "$240.00", url: "/products/oversized-boxy-hoodie" },
-  { name: "SCULPTED SWEATSHIRT / SAND", price: "$160.00", url: "/products/oversized-boxy-hoodie" },
-  { name: "RAW SELVEDGE DENIM", price: "$180.00", url: "/products/oversized-boxy-hoodie" },
-  { name: "HEAVYWEIGHT TEE", price: "$65.00", url: "/products/oversized-boxy-hoodie" },
-  { name: "STRUCTURED WOOL COAT", price: "$350.00", url: "/products/oversized-boxy-hoodie" },
-  { name: "TECHNICAL CARGO PANT", price: "$145.00", url: "/products/oversized-boxy-hoodie" },
-];
+import { useCart } from "@/context/CartContext";
+import { allProducts } from "@/data/products";
 
 export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
+  const { formatPrice } = useCart();
   const [query, setQuery] = useState("");
 
   if (!isOpen) return null;
 
   const filteredProducts = query === "" 
     ? [] 
-    : mockProducts.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+    : allProducts.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <div className="fixed inset-0 bg-surface z-[100] flex flex-col p-8 md:p-16 animate-[fade-up-slide_0.3s_forwards]">
@@ -64,12 +57,12 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             {filteredProducts.map((product, idx) => (
               <Link 
                 key={idx} 
-                href={product.url}
+                href={`/products/${product.slug}`}
                 onClick={onClose}
                 className="flex items-center justify-between py-4 border-b border-surface-container hover:px-4 hover:bg-surface-container-low transition-all duration-300 group"
               >
                 <span className="font-headline text-xl group-hover:italic">{product.name}</span>
-                <span className="font-label text-sm text-secondary">{product.price}</span>
+                <span className="font-label text-sm text-secondary">{formatPrice(product.price)}</span>
               </Link>
             ))}
           </div>

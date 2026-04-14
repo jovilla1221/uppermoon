@@ -1,7 +1,11 @@
+"use client";
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useCart } from "@/context/CartContext";
 
 export default function Header({ onOpenCart, onOpenSearch }: { onOpenCart: () => void, onOpenSearch: () => void }) {
+  const { currency, setCurrency } = useCart();
   return (
     <header className="sticky top-0 flex justify-between items-center px-6 py-4 w-full bg-white z-50 shadow-sm">
       <div className="flex items-center gap-4">
@@ -19,10 +23,16 @@ export default function Header({ onOpenCart, onOpenSearch }: { onOpenCart: () =>
           <Link href="#" className="text-[#747878] text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">ARCHIVE</Link>
           <Link href="#" className="text-[#747878] text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">EDITORIAL</Link>
         </div>
-        <div className="flex items-center space-x-8">
-        <button onClick={onOpenSearch} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150" style={{fontSize: '32px'}}>search</button>
-        <Link href="/login" className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center" style={{fontSize: '32px'}}>person</Link>
-        <button onClick={onOpenCart} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150" style={{fontSize: '32px'}}>shopping_bag</button>
+        <div className="flex items-center space-x-6">
+          <button 
+            onClick={() => setCurrency(currency === "USD" ? "IDR" : "USD")}
+            className="text-[10px] font-bold tracking-widest uppercase text-outline hover:text-primary transition-colors border px-2 py-1"
+          >
+            {currency}
+          </button>
+          <button onClick={onOpenSearch} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150" style={{fontSize: '32px'}}>search</button>
+          <Link href="/login" className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center" style={{fontSize: '32px'}}>person</Link>
+          <button onClick={onOpenCart} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150" style={{fontSize: '32px'}}>shopping_bag</button>
         </div>
       </div>
     </header>
