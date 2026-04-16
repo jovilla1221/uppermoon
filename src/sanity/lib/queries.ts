@@ -1,5 +1,14 @@
 import { groq } from "next-sanity";
 
+// Get site settings
+export const siteSettingsQuery = groq`
+  *[_type == "siteSettings"][0] {
+    "logo": logo.asset->url,
+    "hero1": heroSlide1.asset->url,
+    "hero2": heroSlide2.asset->url
+  }
+`;
+
 // Get all products
 export const allProductsQuery = groq`
   *[_type == "product"] | order(_createdAt desc) {

@@ -16,16 +16,24 @@ const notoSerif = Noto_Serif({
   style: ["normal", "italic"],
 });
 
+import { siteSettingsQuery } from "@/sanity/lib/queries";
+import { client } from "@/sanity/lib/client";
+
 export const metadata: Metadata = {
   title: "UPPERMOON | Architectural Silence",
   description: "Minimalist urban aesthetic streetwear.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let settings: any = null;
+  try {
+    settings = await client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } });
+  } catch (e) {}
+
   return (
     <html lang="en" className="light" suppressHydrationWarning>
       <head>
@@ -36,7 +44,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <CartProvider>
-          <Navbar />
+          <Navbar logoUrl={settings?.logo || ""} />
           {children}
           <Footer />
         </CartProvider>

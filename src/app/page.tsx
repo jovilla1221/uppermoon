@@ -7,6 +7,8 @@ import { allProductsQuery } from "@/sanity/lib/queries";
 import { allProducts as staticProducts } from "@/data/products";
 import BestSellersClient from "@/components/home/BestSellersClient";
 
+import { siteSettingsQuery } from "@/sanity/lib/queries";
+
 export const revalidate = 0;
 
 export default async function Home() {
@@ -18,12 +20,17 @@ export default async function Home() {
     products = staticProducts;
   }
 
+  let settings: any = null;
+  try {
+    settings = await client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } });
+  } catch (e) {}
+
   // Get up to 4 products for the best sellers section
   const bestSellers = products.slice(0, 4);
 
   return (
     <main>
-      <HeroSlider />
+      <HeroSlider hero1Url={settings?.hero1 || ""} hero2Url={settings?.hero2 || ""} />
       
       {/* Best Sellers */}
       <section className="bg-[#EEEEEE] py-24 px-6 md:px-12">

@@ -5,13 +5,14 @@ import Header from "./Header";
 import SearchOverlay from "./SearchOverlay";
 import { useCart } from "@/context/CartContext";
 
-export default function Navbar() {
+export default function Navbar({ logoUrl }: { logoUrl?: string }) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { openCart } = useCart();
 
   return (
     <>
       <Header 
+        logoUrl={logoUrl}
         onOpenCart={openCart} 
         onOpenSearch={() => setIsSearchOpen(true)}
       />

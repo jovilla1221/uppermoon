@@ -20,6 +20,7 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState("");
 
   const [products, setProducts] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"products" | "settings">("products");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -42,6 +43,16 @@ export default function AdminPage() {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  // Settings tab state
+  const [settings, setSettings] = useState({
+    logoUrl: "", logoRef: "",
+    hero1Url: "", hero1Ref: "",
+    hero2Url: "", hero2Ref: ""
+  });
+  const logoRef = useRef<HTMLInputElement>(null);
+  const hero1Ref = useRef<HTMLInputElement>(null);
+  const hero2Ref = useRef<HTMLInputElement>(null);
+
   // Auto login check
   useEffect(() => {
     const token = sessionStorage.getItem("admin_token");
@@ -60,6 +71,24 @@ export default function AdminPage() {
     setProducts(Array.isArray(data) ? data : []);
     setLoading(false);
   };
+
+  const fetchSettings = async () => {
+    const res = await fetch("/api/admin/settings");
+    const data = await res.json();
+    if (data && !data.error) {
+      setSettings({
+        logoUrl: data.logoUrl || "", logoRef: data.logoRef || "",
+        hero1Url: data.hero1Url || "", hero1Ref: data.hero1Ref || "",
+        hero2Url: data.hero2Url || "", hero2Ref: data.hero2Ref || ""
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn && activeTab === "settings") {
+      fetchSettings();
+    }
+  }, [isLoggedIn, activeTab]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -204,6 +233,57 @@ export default function AdminPage() {
     }
   };
 
+  const uploadSingleSettingImage = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
+    const data = await res.json();
+    return data;
+  };
+
+  const handleSettingChange = async (e: React.ChangeEvent<HTMLInputElement>, field: "logo" | "hero1" | "hero2") => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    setMessage(`Mengupload ${field}...`);
+    try {
+      const data = await uploadSingleSettingImage(file);
+      if (data.assetId) {
+        setSettings(prev => ({
+          ...prev,
+          [`${field}Url`]: data.url,
+          [`${field}Ref`]: data.assetId
+        }));
+        setMessage(`✅ ${field} berhasil diupload! Klik SIMPAN PENGATURAN untuk meresmikannya.`);
+      }
+    } catch (e: any) {
+      setMessage(`❌ Gagal upload: ${e.message}`);
+    }
+    setUploading(false);
+  };
+
+  const handeSaveSettings = async () => {
+    setUploading(true);
+    setMessage("Menyimpan pengaturan...");
+    const res = await fetch("/api/admin/settings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        logoRef: settings.logoRef,
+        heroSlide1Ref: settings.hero1Ref,
+        heroSlide2Ref: settings.hero2Ref
+      }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setMessage("✅ Pengaturan berhasil disimpan!");
+    } else {
+      setMessage("❌ Gagal menyimpan pengaturan.");
+    }
+    setUploading(false);
+  };
+
   // LOGIN PAGE
   if (!isLoggedIn) {
     return (
@@ -252,9 +332,25 @@ export default function AdminPage() {
     <div className="min-h-screen bg-[#0a0a0a] text-white">
       {/* Header */}
       <header className="border-b border-neutral-800 px-6 py-4 flex justify-between items-center sticky top-0 bg-[#0a0a0a]/95 backdrop-blur-md z-50">
-        <div>
-          <h1 className="text-lg font-bold tracking-tight">UPPERMOON</h1>
-          <p className="text-[10px] tracking-[0.2em] text-neutral-500 uppercase">Admin Panel</p>
+        <div className="flex items-center gap-8">
+          <div>
+            <h1 className="text-lg font-bold tracking-tight">UPPERMOON</h1>
+            <p className="text-[10px] tracking-[0.2em] text-neutral-500 uppercase">Admin Panel</p>
+          </div>
+          <div className="hidden md:flex gap-4">
+            <button 
+              onClick={() => setActiveTab("products")}
+              className={`text-xs tracking-widest uppercase transition-colors px-3 py-2 ${activeTab === "products" ? "text-white bg-neutral-900" : "text-neutral-500 hover:text-white"}`}
+            >
+              PRODUK
+            </button>
+            <button 
+              onClick={() => setActiveTab("settings")}
+              className={`text-xs tracking-widest uppercase transition-colors px-3 py-2 ${activeTab === "settings" ? "text-white bg-neutral-900" : "text-neutral-500 hover:text-white"}`}
+            >
+              PENGATURAN
+            </button>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <a href="/" target="_blank" className="text-[10px] tracking-widest uppercase text-neutral-400 hover:text-white transition-colors border border-neutral-700 px-3 py-2">
@@ -266,6 +362,12 @@ export default function AdminPage() {
         </div>
       </header>
 
+      {/* Mobile nav (visible only on small screens) */}
+      <div className="md:hidden flex border-b border-neutral-800 px-6 bg-neutral-950">
+        <button onClick={() => setActiveTab("products")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "products" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>PRODUK</button>
+        <button onClick={() => setActiveTab("settings")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "settings" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>PENGATURAN</button>
+      </div>
+
       <main className="max-w-5xl mx-auto px-6 py-10">
         {/* Status message */}
         {message && (
@@ -275,22 +377,24 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* Actions Bar */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Produk</h2>
-            <p className="text-xs text-neutral-500 mt-1">{products.length} item dalam katalog</p>
-          </div>
-          <button
-            onClick={() => {
-              if (showForm) resetForm();
-              else setShowForm(true);
-            }}
-            className="bg-white text-black px-6 py-3 text-xs font-bold tracking-[0.15em] uppercase hover:bg-neutral-200 transition-colors flex items-center gap-2"
-          >
-            <span>{showForm ? "✕ TUTUP" : "+ TAMBAH PRODUK"}</span>
-          </button>
-        </div>
+        {/* Actions Bar (Products Tab) */}
+        {activeTab === "products" && (
+          <>
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">Produk</h2>
+                <p className="text-xs text-neutral-500 mt-1">{products.length} item dalam katalog</p>
+              </div>
+              <button
+                onClick={() => {
+                  if (showForm) resetForm();
+                  else setShowForm(true);
+                }}
+                className="bg-white text-black px-6 py-3 text-xs font-bold tracking-[0.15em] uppercase hover:bg-neutral-200 transition-colors flex items-center gap-2"
+              >
+                <span>{showForm ? "✕ TUTUP" : "+ TAMBAH PRODUK"}</span>
+              </button>
+            </div>
 
         {/* Add Product Form */}
         {showForm && (
@@ -496,6 +600,84 @@ export default function AdminPage() {
                 </button>
               </div>
             ))}
+          </div>
+        )}
+        </>
+        )}
+
+        {/* Settings Tab */}
+        {activeTab === "settings" && (
+          <div>
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold tracking-tight">Pengaturan Tampilan</h2>
+              <p className="text-xs text-neutral-500 mt-1">Ubah Logo Utama dan Gambar Hero Slider</p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-neutral-900 border border-neutral-800 p-6">
+                <h3 className="text-sm font-bold tracking-[0.15em] uppercase border-b border-neutral-800 pb-4 mb-4">Logo Website</h3>
+                <div className="w-full h-32 bg-black flex items-center justify-center mb-4 border border-neutral-800">
+                  {settings.logoUrl ? (
+                    <img src={settings.logoUrl} alt="Logo Preview" className="h-10 w-auto object-contain" />
+                  ) : (
+                    <span className="text-neutral-600 text-xs">Belum ada logo (pakai teks default)</span>
+                  )}
+                </div>
+                <input ref={logoRef} type="file" accept="image/*" className="hidden" onChange={(e) => handleSettingChange(e, "logo")} />
+                <button 
+                  onClick={() => logoRef.current?.click()}
+                  className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
+                >
+                  GANTI LOGO
+                </button>
+              </div>
+
+              <div className="bg-neutral-900 border border-neutral-800 p-6">
+                <h3 className="text-sm font-bold tracking-[0.15em] uppercase border-b border-neutral-800 pb-4 mb-4">Hero Slide 1</h3>
+                <div className="w-full h-32 bg-black flex items-center justify-center mb-4 border border-neutral-800 relative">
+                  {settings.hero1Url ? (
+                    <img src={settings.hero1Url} alt="Hero 1 Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-neutral-600 text-xs">Belum ada gambar (pakai statis lokal)</span>
+                  )}
+                </div>
+                <input ref={hero1Ref} type="file" accept="image/*" className="hidden" onChange={(e) => handleSettingChange(e, "hero1")} />
+                <button 
+                  onClick={() => hero1Ref.current?.click()}
+                  className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
+                >
+                  GANTI SLIDE 1
+                </button>
+              </div>
+
+              <div className="bg-neutral-900 border border-neutral-800 p-6">
+                <h3 className="text-sm font-bold tracking-[0.15em] uppercase border-b border-neutral-800 pb-4 mb-4">Hero Slide 2</h3>
+                <div className="w-full h-32 bg-black flex items-center justify-center mb-4 border border-neutral-800 relative">
+                  {settings.hero2Url ? (
+                    <img src={settings.hero2Url} alt="Hero 2 Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-neutral-600 text-xs">Belum ada gambar (pakai Unsplash default)</span>
+                  )}
+                </div>
+                <input ref={hero2Ref} type="file" accept="image/*" className="hidden" onChange={(e) => handleSettingChange(e, "hero2")} />
+                <button 
+                  onClick={() => hero2Ref.current?.click()}
+                  className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
+                >
+                  GANTI SLIDE 2
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-8">
+              <button 
+                onClick={handeSaveSettings}
+                disabled={uploading}
+                className="bg-white text-black px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-200 transition-colors disabled:opacity-50"
+              >
+                {uploading ? "MENYIMPAN..." : "SIMPAN SEMUA PENGATURAN"}
+              </button>
+            </div>
           </div>
         )}
       </main>

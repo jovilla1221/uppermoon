@@ -3,22 +3,22 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-const slides = [
-  {
-    image: "/hero-1.png",
-    tagline: "NEW ARRIVALS",
-    collection: "Autumn / Winter Series",
-    position: "center center"
-  },
-  {
-    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=2000&auto=format&fit=crop",
-    tagline: "EXCLUSIVE DROP",
-    collection: "Creative Performance",
-    position: "center top"
-  }
-];
+export default function HeroSlider({ hero1Url, hero2Url }: { hero1Url?: string, hero2Url?: string }) {
+  const slides = [
+    {
+      image: hero1Url || "/hero-1.png",
+      tagline: "NEW ARRIVALS",
+      collection: "Autumn / Winter Series",
+      position: "center center"
+    },
+    {
+      image: hero2Url || "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=2000&auto=format&fit=crop",
+      tagline: "EXCLUSIVE DROP",
+      collection: "Creative Performance",
+      position: "center top"
+    }
+  ];
 
-export default function HeroSlider() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
