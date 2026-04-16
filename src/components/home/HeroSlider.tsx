@@ -5,13 +5,13 @@ import Image from "next/image";
 
 const slides = [
   {
-    image: "https://lh3.googleusercontent.com/aida/ADBb0ugLk57sff8RvCUoeT49daC0hOUu7iRw3TjvU2dMCstYbxEq738JWb7bBaYI9DPXenyjKmzIKdiuR1uf2I9jm4DxUEg29Ce64Tohg3QgasYD5RU8s5n_aXKZaM-5iGPLozdKSNhxPjbKOj5MYU86uT_0jU9kLQugmuy4P_CjMNvnUDLqq-B3QoEjVvsdslZrGUxRHevAofiGglE7TudHQadgFooTIg5TPacksJLtrkhIcsoc1QMWJ26irWP-kZee5Sk8hH7qIaDl0ps",
+    image: "/hero-1.png",
     tagline: "NEW ARRIVALS",
     collection: "Autumn / Winter Series",
     position: "center center"
   },
   {
-    image: "https://lh3.googleusercontent.com/aida/ADBb0uhzCX9_9OSmzZ2310-SnyANX5gPDBVtfLoyrFKYc29pLqd22LosjJfwW0G7emVshOWRD-Rg2ned6lzV-ALgpdYB9hoBHPQC-GvY8SNlf2J3nYFFqJgTUekCeQgDZF3shEcR7IwEuuCT_R8lgoKJvjVSk3GorbqoSL06SUGpcLCaejb7tAy_9EBuXbTt2OHEob1do_aTqWJ18J7_-vV7k2ITZLwEL4wNP25l9Y9cNw1sQgRDn_6qzkKLWLiOEYkEN7jw55bnfV8izQ",
+    image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?q=80&w=2000&auto=format&fit=crop",
     tagline: "EXCLUSIVE DROP",
     collection: "Creative Performance",
     position: "center top"

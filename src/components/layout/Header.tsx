@@ -9,12 +9,11 @@ export default function Header({ onOpenCart, onOpenSearch }: { onOpenCart: () =>
   return (
     <header className="sticky top-0 flex justify-between items-center px-4 md:px-8 py-2 md:py-3 w-full bg-white z-50 shadow-sm border-b border-surface-container">
       <div className="flex items-center gap-4">
-        <Link href="/">
-          <img 
-            alt="UPPERMOON" 
-            className="w-auto object-contain h-8 md:h-10 cursor-pointer" 
-            src="https://lh3.googleusercontent.com/aida/ADBb0uhF5kIfV9gzcMRvQPhk50wiBWkXNPRlAYIrnW4rZlbQ-bLba2OC-Qr-6_AzWpzoJ2qfMJJ_CfmwUKxWcNbE0DQO9CCeWf1MNRwMiFrVHqnlIkWeTTUmv5rCdNJyMG5S4APK3zONIe-wRVZ-UDWDlun8yPIYRxrNoHufUq1FZcRcJAqWGu3o7vdtqZUeM6gHnP4LaTig3mK55IkDzP33OpQ8wVjw36DXmohEb4A0Mb9i_lv60g2pUhe8rB7cbmoWhcRRSOCh0vQwpg" 
-          />
+        <Link 
+          href="/" 
+          className="font-black text-xl md:text-2xl tracking-[0.2em] text-[#000000] hover:opacity-70 transition-opacity"
+        >
+          UPPERMOON
         </Link>
       </div>
       <div className="flex items-center gap-4 md:gap-6">
