@@ -399,7 +399,7 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={() => removeExistingImage(idx)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 text-xs flex items-center justify-center opacity-100 hover:bg-red-600 transition-colors z-10 rounded-full"
                     >
                       ✕
                     </button>
@@ -413,7 +413,7 @@ export default function AdminPage() {
                     <button
                       type="button"
                       onClick={() => removeNewImage(idx)}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                      className="absolute -top-2 -right-2 bg-red-500 text-white w-6 h-6 text-xs flex items-center justify-center opacity-100 hover:bg-red-600 transition-colors z-10 rounded-full"
                     >
                       ✕
                     </button>
