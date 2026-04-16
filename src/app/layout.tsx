@@ -32,7 +32,7 @@ export default async function RootLayout({
   let settings: any = null;
   try {
     settings = await client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } });
-  } catch (e) {}
+  } catch (e) { }
 
   return (
     <html lang="en" className="light" suppressHydrationWarning>

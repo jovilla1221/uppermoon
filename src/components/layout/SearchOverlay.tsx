@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface SearchOverlayProps {
@@ -9,17 +9,29 @@ interface SearchOverlayProps {
 }
 
 import { useCart } from "@/context/CartContext";
-import { allProducts } from "@/data/products";
+import { client } from "@/sanity/lib/client";
+import { allProductsQuery } from "@/sanity/lib/queries";
 
 export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const { formatPrice } = useCart();
   const [query, setQuery] = useState("");
+  const [products, setProducts] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isOpen && products.length === 0) {
+      client.fetch(allProductsQuery)
+        .then(data => {
+          if (data && data.length > 0) setProducts(data);
+        })
+        .catch(console.error);
+    }
+  }, [isOpen, products.length]);
 
   if (!isOpen) return null;
 
   const filteredProducts = query === "" 
     ? [] 
-    : allProducts.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+    : products.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
 
   return (
     <div className="fixed inset-0 bg-surface z-[100] flex flex-col p-8 md:p-16 animate-[fade-up-slide_0.3s_forwards]">

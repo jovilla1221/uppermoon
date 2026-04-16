@@ -1,6 +1,5 @@
 import { client } from "@/sanity/lib/client";
 import { allProductsQuery } from "@/sanity/lib/queries";
-import { allProducts as staticProducts } from "@/data/products";
 import ProductsClient from "./ProductsClient";
 
 export default async function ProductsPage() {
@@ -10,13 +9,9 @@ export default async function ProductsPage() {
     const sanityProducts = await client.fetch(allProductsQuery);
     if (sanityProducts && sanityProducts.length > 0) {
       products = sanityProducts;
-    } else {
-      // Fallback to static data if Sanity is empty
-      products = staticProducts;
     }
-  } catch {
-    // Fallback to static data if Sanity fetch fails
-    products = staticProducts;
+  } catch (e) {
+    console.error("Failed to fetch products:", e);
   }
 
   return <ProductsClient products={products} />;
