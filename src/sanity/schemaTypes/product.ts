@@ -83,7 +83,6 @@ export const product = defineType({
       options: {
         layout: "grid",
       },
-      validation: (Rule) => Rule.required().min(1),
     }),
     defineField({
       name: "featured",
