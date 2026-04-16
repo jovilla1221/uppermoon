@@ -25,8 +25,6 @@ export default function Header({ onOpenCart, onOpenSearch, logoUrl }: { onOpenCa
       <div className="flex items-center gap-4 md:gap-6">
         <div className="hidden md:flex gap-6 lg:gap-8 items-center mr-2 lg:mr-4">
           <Link href="/products" className="text-[#000000] font-bold text-[0.625rem] lg:text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">SHOP</Link>
-          <Link href="#" className="text-[#747878] text-[0.625rem] lg:text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">ARCHIVE</Link>
-          <Link href="#" className="text-[#747878] text-[0.625rem] lg:text-[0.6875rem] tracking-widest uppercase hover:opacity-70 transition-opacity duration-150">EDITORIAL</Link>
         </div>
         <div className="flex items-center space-x-4 md:space-x-5">
           <button 
