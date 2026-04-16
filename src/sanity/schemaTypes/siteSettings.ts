@@ -26,6 +26,24 @@ export const siteSettings = defineType({
       description: "Second slide image in the hero section",
       options: { hotspot: true },
     }),
+    defineField({
+      name: "community1",
+      title: "Community Image 1",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "community2",
+      title: "Community Image 2",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "community3",
+      title: "Community Image 3",
+      type: "image",
+      options: { hotspot: true },
+    }),
   ],
   preview: {
     select: {

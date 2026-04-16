@@ -47,11 +47,17 @@ export default function AdminPage() {
   const [settings, setSettings] = useState({
     logoUrl: "", logoRef: "",
     hero1Url: "", hero1Ref: "",
-    hero2Url: "", hero2Ref: ""
+    hero2Url: "", hero2Ref: "",
+    community1Url: "", community1Ref: "",
+    community2Url: "", community2Ref: "",
+    community3Url: "", community3Ref: ""
   });
   const logoRef = useRef<HTMLInputElement>(null);
   const hero1Ref = useRef<HTMLInputElement>(null);
   const hero2Ref = useRef<HTMLInputElement>(null);
+  const community1Ref = useRef<HTMLInputElement>(null);
+  const community2Ref = useRef<HTMLInputElement>(null);
+  const community3Ref = useRef<HTMLInputElement>(null);
 
   // Auto login check
   useEffect(() => {
@@ -79,7 +85,10 @@ export default function AdminPage() {
       setSettings({
         logoUrl: data.logoUrl || "", logoRef: data.logoRef || "",
         hero1Url: data.hero1Url || "", hero1Ref: data.hero1Ref || "",
-        hero2Url: data.hero2Url || "", hero2Ref: data.hero2Ref || ""
+        hero2Url: data.hero2Url || "", hero2Ref: data.hero2Ref || "",
+        community1Url: data.community1Url || "", community1Ref: data.community1Ref || "",
+        community2Url: data.community2Url || "", community2Ref: data.community2Ref || "",
+        community3Url: data.community3Url || "", community3Ref: data.community3Ref || ""
       });
     }
   };
@@ -241,7 +250,7 @@ export default function AdminPage() {
     return data;
   };
 
-  const handleSettingChange = async (e: React.ChangeEvent<HTMLInputElement>, field: "logo" | "hero1" | "hero2") => {
+  const handleSettingChange = async (e: React.ChangeEvent<HTMLInputElement>, field: "logo" | "hero1" | "hero2" | "community1" | "community2" | "community3") => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -272,7 +281,10 @@ export default function AdminPage() {
       body: JSON.stringify({
         logoRef: settings.logoRef,
         heroSlide1Ref: settings.hero1Ref,
-        heroSlide2Ref: settings.hero2Ref
+        heroSlide2Ref: settings.hero2Ref,
+        community1Ref: settings.community1Ref,
+        community2Ref: settings.community2Ref,
+        community3Ref: settings.community3Ref
       }),
     });
     const data = await res.json();
@@ -665,6 +677,61 @@ export default function AdminPage() {
                   className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
                 >
                   GANTI SLIDE 2
+                </button>
+              </div>
+
+              {/* Community Images */}
+              <div className="bg-neutral-900 border border-neutral-800 p-6">
+                <h3 className="text-sm font-bold tracking-[0.15em] uppercase border-b border-neutral-800 pb-4 mb-4">Community 1 (Lifestyle)</h3>
+                <div className="w-full h-32 bg-black flex items-center justify-center mb-4 border border-neutral-800 relative">
+                  {settings.community1Url ? (
+                    <img src={settings.community1Url} alt="Community 1 Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-neutral-600 text-xs">Belum ada gambar (pakai stok template)</span>
+                  )}
+                </div>
+                <input ref={community1Ref} type="file" accept="image/*" className="hidden" onChange={(e) => handleSettingChange(e, "community1")} />
+                <button 
+                  onClick={() => community1Ref.current?.click()}
+                  className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
+                >
+                  UPLOAD FOTO 1
+                </button>
+              </div>
+
+              <div className="bg-neutral-900 border border-neutral-800 p-6">
+                <h3 className="text-sm font-bold tracking-[0.15em] uppercase border-b border-neutral-800 pb-4 mb-4">Community 2 (Editorial)</h3>
+                <div className="w-full h-32 bg-black flex items-center justify-center mb-4 border border-neutral-800 relative">
+                  {settings.community2Url ? (
+                    <img src={settings.community2Url} alt="Community 2 Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-neutral-600 text-xs">Belum ada gambar (pakai stok template)</span>
+                  )}
+                </div>
+                <input ref={community2Ref} type="file" accept="image/*" className="hidden" onChange={(e) => handleSettingChange(e, "community2")} />
+                <button 
+                  onClick={() => community2Ref.current?.click()}
+                  className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
+                >
+                  UPLOAD FOTO 2
+                </button>
+              </div>
+
+              <div className="bg-neutral-900 border border-neutral-800 p-6">
+                <h3 className="text-sm font-bold tracking-[0.15em] uppercase border-b border-neutral-800 pb-4 mb-4">Community 3 (Street Style)</h3>
+                <div className="w-full h-32 bg-black flex items-center justify-center mb-4 border border-neutral-800 relative">
+                  {settings.community3Url ? (
+                    <img src={settings.community3Url} alt="Community 3 Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-neutral-600 text-xs">Belum ada gambar (pakai stok template)</span>
+                  )}
+                </div>
+                <input ref={community3Ref} type="file" accept="image/*" className="hidden" onChange={(e) => handleSettingChange(e, "community3")} />
+                <button 
+                  onClick={() => community3Ref.current?.click()}
+                  className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
+                >
+                  UPLOAD FOTO 3
                 </button>
               </div>
             </div>

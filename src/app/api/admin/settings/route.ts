@@ -11,7 +11,13 @@ export async function GET() {
       "hero1Url": heroSlide1.asset->url,
       "hero1Ref": heroSlide1.asset->_id,
       "hero2Url": heroSlide2.asset->url,
-      "hero2Ref": heroSlide2.asset->_id
+      "hero2Ref": heroSlide2.asset->_id,
+      "community1Url": community1.asset->url,
+      "community1Ref": community1.asset->_id,
+      "community2Url": community2.asset->url,
+      "community2Ref": community2.asset->_id,
+      "community3Url": community3.asset->url,
+      "community3Ref": community3.asset->_id
     }`, {}, { cache: 'no-store' }); // Ensure fresh fetch for admin
     return NextResponse.json(settings || {});
   } catch (error: any) {
@@ -36,6 +42,15 @@ export async function POST(req: NextRequest) {
     }
     if (body.heroSlide2Ref) {
       doc.heroSlide2 = { _type: "image", asset: { _type: "reference", _ref: body.heroSlide2Ref } };
+    }
+    if (body.community1Ref) {
+      doc.community1 = { _type: "image", asset: { _type: "reference", _ref: body.community1Ref } };
+    }
+    if (body.community2Ref) {
+      doc.community2 = { _type: "image", asset: { _type: "reference", _ref: body.community2Ref } };
+    }
+    if (body.community3Ref) {
+      doc.community3 = { _type: "image", asset: { _type: "reference", _ref: body.community3Ref } };
     }
 
     const result = await writeClient.createOrReplace(doc);
