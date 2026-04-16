@@ -13,7 +13,13 @@ export const allProductsQuery = groq`
     sizes,
     featured,
     "image": images[0].asset->url,
-    "gallery": images[].asset->url
+    "gallery": images[].asset->url,
+    "rawImages": images[]{
+      _key,
+      _type,
+      "assetRef": asset->_id,
+      "url": asset->url
+    }
   }
 `;
 
@@ -30,7 +36,13 @@ export const productBySlugQuery = groq`
     sizes,
     featured,
     "image": images[0].asset->url,
-    "gallery": images[].asset->url
+    "gallery": images[].asset->url,
+    "rawImages": images[]{
+      _key,
+      _type,
+      "assetRef": asset->_id,
+      "url": asset->url
+    }
   }
 `;
 
@@ -43,6 +55,13 @@ export const productsByCategoryQuery = groq`
     price,
     category,
     collection,
-    "image": images[0].asset->url
+    "image": images[0].asset->url,
+    "gallery": images[].asset->url,
+    "rawImages": images[]{
+      _key,
+      _type,
+      "assetRef": asset->_id,
+      "url": asset->url
+    }
   }
 `;

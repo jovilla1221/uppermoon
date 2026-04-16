@@ -27,10 +27,10 @@ export async function POST(req: NextRequest) {
       description: body.description || "",
       sizes: body.sizes || ["S", "M", "L", "XL"],
       featured: body.featured || false,
-      images: body.imageAssetIds
-        ? body.imageAssetIds.map((id: string, idx: number) => ({
+      images: body.newAssetIds
+        ? body.newAssetIds.map((id: string, idx: number) => ({
             _type: "image",
-            _key: `img-${idx}`,
+            _key: `img-${idx}-${Date.now()}`,
             asset: { _type: "reference", _ref: id },
           }))
         : [],
@@ -64,14 +64,30 @@ export async function PATCH(req: NextRequest) {
       featured: updates.featured || false,
     };
 
-    // Only update images if new assets are provided
-    if (updates.imageAssetIds && updates.imageAssetIds.length > 0) {
-      patchData.images = updates.imageAssetIds.map((assetId: string, idx: number) => ({
-        _type: "image",
-        _key: `img-${idx}-${Date.now()}`,
-        asset: { _type: "reference", _ref: assetId },
-      }));
+    // Combine existing and new asset IDs to form the new images array
+    const allImages: any[] = [];
+    
+    if (updates.existingAssetRefs && updates.existingAssetRefs.length > 0) {
+      updates.existingAssetRefs.forEach((ref: string, idx: number) => {
+        allImages.push({
+          _type: "image",
+          _key: `img-exist-${idx}-${Date.now()}`,
+          asset: { _type: "reference", _ref: ref }
+        });
+      });
     }
+
+    if (updates.newAssetIds && updates.newAssetIds.length > 0) {
+      updates.newAssetIds.forEach((id: string, idx: number) => {
+        allImages.push({
+          _type: "image",
+          _key: `img-new-${idx}-${Date.now()}`,
+          asset: { _type: "reference", _ref: id },
+        });
+      });
+    }
+
+    patchData.images = allImages;
 
     const result = await writeClient.patch(id).set(patchData).commit();
     return NextResponse.json({ success: true, id: result._id });

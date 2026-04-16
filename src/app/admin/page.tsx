@@ -37,6 +37,7 @@ export default function AdminPage() {
     description: "",
     sizes: ["S", "M", "L", "XL"],
   });
+  const [existingImages, setExistingImages] = useState<any[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -92,7 +93,11 @@ export default function AdminPage() {
     });
   };
 
-  const removeImage = (idx: number) => {
+  const removeExistingImage = (idx: number) => {
+    setExistingImages((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const removeNewImage = (idx: number) => {
     setImageFiles((prev) => prev.filter((_, i) => i !== idx));
     setImagePreviews((prev) => prev.filter((_, i) => i !== idx));
   };
@@ -116,14 +121,16 @@ export default function AdminPage() {
       description: product.description || "",
       sizes: product.sizes || ["S", "M", "L", "XL"],
     });
-    setImagePreviews(product.gallery || [product.image]);
+    setExistingImages(product.rawImages || []);
     setImageFiles([]); // Clear new uploads state
+    setImagePreviews([]);
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetForm = () => {
     setForm({ name: "", slug: "", price: "", category: "TOPS", collection: "", description: "", sizes: ["S", "M", "L", "XL"] });
+    setExistingImages([]);
     setImageFiles([]);
     setImagePreviews([]);
     setIsEditing(false);
@@ -133,7 +140,7 @@ export default function AdminPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isEditing && imageFiles.length === 0) {
+    if (existingImages.length === 0 && imageFiles.length === 0) {
       setMessage("⚠️ Tambahkan minimal 1 foto produk");
       return;
     }
@@ -142,18 +149,21 @@ export default function AdminPage() {
     setMessage(isEditing ? "Memperbarui produk..." : "Mengupload foto...");
 
     // Upload images ONLY if new ones are selected
-    const assetIds: string[] = [];
+    const newAssetIds: string[] = [];
     if (imageFiles.length > 0) {
       for (const file of imageFiles) {
         const formData = new FormData();
         formData.append("file", file);
         const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
         const data = await res.json();
-        if (data.assetId) assetIds.push(data.assetId);
+        if (data.assetId) newAssetIds.push(data.assetId);
       }
     }
 
     setMessage(isEditing ? "Mengirim pembaruan..." : "Menyimpan produk...");
+
+    // Combine existing asset refs and newly uploaded asset IDs
+    const existingAssetRefs = existingImages.map(img => img.assetRef);
 
     // Create or Update product
     const res = await fetch("/api/admin/products", {
@@ -164,7 +174,8 @@ export default function AdminPage() {
         id: editingId,
         slug: form.slug || generateSlug(form.name),
         price: Number(form.price),
-        imageAssetIds: assetIds.length > 0 ? assetIds : undefined,
+        existingAssetRefs,
+        newAssetIds,
       }),
     });
 
@@ -378,23 +389,37 @@ export default function AdminPage() {
             </div>
             <div className="mt-6">
               <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">
-                Foto Produk {isEditing ? "(kosongkan jika tidak ingin ganti)" : "*"}
+                Foto Produk * (Minimal 1)
               </label>
               <div className="flex flex-wrap gap-4 mb-4">
-                {imagePreviews.map((src, idx) => (
-                  <div key={idx} className="relative group w-24 h-24 bg-neutral-800 border border-neutral-700">
-                    <img src={src} alt="" className="w-full h-full object-cover" />
-                    {!isEditing && (
-                      <button
-                        type="button"
-                        onClick={() => removeImage(idx)}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        ✕
-                      </button>
-                    )}
+                {/* Existing Images */}
+                {existingImages.map((img, idx) => (
+                  <div key={img._key || idx} className="relative group w-24 h-24 bg-neutral-800 border border-neutral-700">
+                    <img src={img.url} alt="" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeExistingImage(idx)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    >
+                      ✕
+                    </button>
                   </div>
                 ))}
+                
+                {/* New Images */}
+                {imagePreviews.map((src, idx) => (
+                  <div key={`new-${idx}`} className="relative group w-24 h-24 bg-neutral-800 border border-neutral-700">
+                    <img src={src} alt="" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => removeNewImage(idx)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
