@@ -147,6 +147,59 @@ export default function AdminPage() {
       .replace(/(^-|-$)/g, "");
   };
 
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // Max dimensions for optimization
+          const MAX_WIDTH = 1200;
+          const MAX_HEIGHT = 1200;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx?.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            "image/jpeg",
+            0.8 // 80% quality
+          );
+        };
+        img.src = event.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleEdit = (product: any) => {
     setIsEditing(true);
     setEditingId(product._id);
@@ -190,8 +243,15 @@ export default function AdminPage() {
     const newAssetIds: string[] = [];
     if (imageFiles.length > 0) {
       for (const file of imageFiles) {
+        let fileToUpload = file;
+        // Compress if larger than 1MB
+        if (file.size > 1024 * 1024) {
+          setMessage(`Mengompres ${file.name}...`);
+          fileToUpload = await compressImage(file);
+        }
+
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", fileToUpload);
         const res = await fetch("/api/admin/upload", { method: "POST", body: formData });
         const data = await res.json();
         if (data.assetId) newAssetIds.push(data.assetId);
@@ -255,9 +315,17 @@ export default function AdminPage() {
     if (!file) return;
 
     setUploading(true);
+    let fileToUpload = file;
+    
+    // Compress if larger than 1MB
+    if (file.size > 1024 * 1024) {
+      setMessage(`Mengompres ${field}...`);
+      fileToUpload = await compressImage(file);
+    }
+
     setMessage(`Mengupload ${field}...`);
     try {
-      const data = await uploadSingleSettingImage(file);
+      const data = await uploadSingleSettingImage(fileToUpload);
       if (data.assetId) {
         setSettings(prev => ({
           ...prev,
