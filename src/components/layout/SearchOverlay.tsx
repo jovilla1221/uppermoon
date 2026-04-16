@@ -19,7 +19,14 @@ export default function SearchOverlay({ isOpen, onClose, products = [] }: Search
 
   const filteredProducts = query === "" 
     ? [] 
-    : products.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()));
+    : products.filter((p) => {
+        const searchTerm = query.toLowerCase();
+        return (
+          p.name?.toLowerCase().includes(searchTerm) ||
+          p.category?.toLowerCase().includes(searchTerm) ||
+          p.collection?.toLowerCase().includes(searchTerm)
+        );
+      });
 
   return (
     <div className="fixed inset-0 bg-surface z-[100] flex flex-col p-8 md:p-16 animate-[fade-up-slide_0.3s_forwards]">
