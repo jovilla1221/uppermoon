@@ -48,6 +48,7 @@ export default function AdminPage() {
     logoUrl: "", logoRef: "",
     hero1Url: "", hero1Ref: "",
     hero2Url: "", hero2Ref: "",
+    hero3Url: "", hero3Ref: "",
     community1Url: "", community1Ref: "",
     community2Url: "", community2Ref: "",
     community3Url: "", community3Ref: ""
@@ -55,6 +56,7 @@ export default function AdminPage() {
   const logoRef = useRef<HTMLInputElement>(null);
   const hero1Ref = useRef<HTMLInputElement>(null);
   const hero2Ref = useRef<HTMLInputElement>(null);
+  const hero3Ref = useRef<HTMLInputElement>(null);
   const community1Ref = useRef<HTMLInputElement>(null);
   const community2Ref = useRef<HTMLInputElement>(null);
   const community3Ref = useRef<HTMLInputElement>(null);
@@ -86,6 +88,7 @@ export default function AdminPage() {
         logoUrl: data.logoUrl || "", logoRef: data.logoRef || "",
         hero1Url: data.hero1Url || "", hero1Ref: data.hero1Ref || "",
         hero2Url: data.hero2Url || "", hero2Ref: data.hero2Ref || "",
+        hero3Url: data.hero3Url || "", hero3Ref: data.hero3Ref || "",
         community1Url: data.community1Url || "", community1Ref: data.community1Ref || "",
         community2Url: data.community2Url || "", community2Ref: data.community2Ref || "",
         community3Url: data.community3Url || "", community3Ref: data.community3Ref || ""
@@ -310,7 +313,7 @@ export default function AdminPage() {
     return data;
   };
 
-  const handleSettingChange = async (e: React.ChangeEvent<HTMLInputElement>, field: "logo" | "hero1" | "hero2" | "community1" | "community2" | "community3") => {
+  const handleSettingChange = async (e: React.ChangeEvent<HTMLInputElement>, field: "logo" | "hero1" | "hero2" | "hero3" | "community1" | "community2" | "community3") => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -350,6 +353,7 @@ export default function AdminPage() {
         logoRef: settings.logoRef,
         heroSlide1Ref: settings.hero1Ref,
         heroSlide2Ref: settings.hero2Ref,
+        heroSlide3Ref: settings.hero3Ref,
         community1Ref: settings.community1Ref,
         community2Ref: settings.community2Ref,
         community3Ref: settings.community3Ref
@@ -745,6 +749,24 @@ export default function AdminPage() {
                   className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
                 >
                   GANTI SLIDE 2
+                </button>
+              </div>
+
+              <div className="bg-neutral-900 border border-neutral-800 p-6">
+                <h3 className="text-sm font-bold tracking-[0.15em] uppercase border-b border-neutral-800 pb-4 mb-4">Hero Slide 3</h3>
+                <div className="w-full h-32 bg-black flex items-center justify-center mb-4 border border-neutral-800 relative">
+                  {settings.hero3Url ? (
+                    <img src={settings.hero3Url} alt="Hero 3 Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-neutral-600 text-xs">Belum ada gambar (pakai Unsplash default)</span>
+                  )}
+                </div>
+                <input ref={hero3Ref} type="file" accept="image/*" className="hidden" onChange={(e) => handleSettingChange(e, "hero3")} />
+                <button 
+                  onClick={() => hero3Ref.current?.click()}
+                  className="w-full border border-neutral-700 text-white py-3 text-xs tracking-widest uppercase hover:bg-neutral-800"
+                >
+                  GANTI SLIDE 3
                 </button>
               </div>
 

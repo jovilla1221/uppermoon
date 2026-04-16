@@ -29,7 +29,11 @@ export default async function Home() {
 
   return (
     <main>
-      <HeroSlider hero1Url={settings?.hero1 || ""} hero2Url={settings?.hero2 || ""} />
+      <HeroSlider 
+        hero1Url={settings?.hero1 || ""} 
+        hero2Url={settings?.hero2 || ""} 
+        hero3Url={settings?.hero3 || ""} 
+      />
 
       {/* Best Sellers */}
       <section className="bg-[#EEEEEE] py-24 px-6 md:px-12">

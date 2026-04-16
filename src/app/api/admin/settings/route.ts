@@ -17,7 +17,9 @@ export async function GET() {
       "community2Url": community2.asset->url,
       "community2Ref": community2.asset->_id,
       "community3Url": community3.asset->url,
-      "community3Ref": community3.asset->_id
+      "community3Ref": community3.asset->_id,
+      "hero3Url": heroSlide3.asset->url,
+      "hero3Ref": heroSlide3.asset->_id
     }`, {}, { cache: 'no-store' }); // Ensure fresh fetch for admin
     return NextResponse.json(settings || {});
   } catch (error: any) {
@@ -42,6 +44,9 @@ export async function POST(req: NextRequest) {
     }
     if (body.heroSlide2Ref) {
       doc.heroSlide2 = { _type: "image", asset: { _type: "reference", _ref: body.heroSlide2Ref } };
+    }
+    if (body.heroSlide3Ref) {
+      doc.heroSlide3 = { _type: "image", asset: { _type: "reference", _ref: body.heroSlide3Ref } };
     }
     if (body.community1Ref) {
       doc.community1 = { _type: "image", asset: { _type: "reference", _ref: body.community1Ref } };

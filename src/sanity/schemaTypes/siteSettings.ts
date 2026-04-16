@@ -44,6 +44,12 @@ export const siteSettings = defineType({
       type: "image",
       options: { hotspot: true },
     }),
+    defineField({
+      name: "heroSlide3",
+      title: "Hero Slide 3",
+      type: "image",
+      options: { hotspot: true },
+    }),
   ],
   preview: {
     select: {

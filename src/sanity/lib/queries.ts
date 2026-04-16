@@ -6,6 +6,7 @@ export const siteSettingsQuery = groq`
     "logo": logo.asset->url,
     "hero1": heroSlide1.asset->url,
     "hero2": heroSlide2.asset->url,
+    "hero3": heroSlide3.asset->url,
     "community1": community1.asset->url,
     "community2": community2.asset->url,
     "community3": community3.asset->url

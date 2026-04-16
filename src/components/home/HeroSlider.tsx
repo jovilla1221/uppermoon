@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-export default function HeroSlider({ hero1Url, hero2Url }: { hero1Url?: string, hero2Url?: string }) {
+export default function HeroSlider({ hero1Url, hero2Url, hero3Url }: { hero1Url?: string, hero2Url?: string, hero3Url?: string }) {
   const slides = [
     {
       image: hero1Url || "/hero-1.png",
@@ -16,6 +16,12 @@ export default function HeroSlider({ hero1Url, hero2Url }: { hero1Url?: string, 
       tagline: "EXCLUSIVE DROP",
       collection: "Creative Performance",
       position: "center top"
+    },
+    {
+      image: hero3Url || "https://images.unsplash.com/photo-1539106602048-b6c764c839a5?q=80&w=2000&auto=format&fit=crop",
+      tagline: "URBAN ESSENTIALS",
+      collection: "Street Style 2024",
+      position: "center center"
     }
   ];
 
