@@ -6,26 +6,14 @@ import Link from "next/link";
 interface SearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
+  products: any[];
 }
 
 import { useCart } from "@/context/CartContext";
-import { client } from "@/sanity/lib/client";
-import { allProductsQuery } from "@/sanity/lib/queries";
 
-export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
+export default function SearchOverlay({ isOpen, onClose, products = [] }: SearchOverlayProps) {
   const { formatPrice } = useCart();
   const [query, setQuery] = useState("");
-  const [products, setProducts] = useState<any[]>([]);
-
-  useEffect(() => {
-    if (isOpen && products.length === 0) {
-      client.fetch(allProductsQuery)
-        .then(data => {
-          if (data && data.length > 0) setProducts(data);
-        })
-        .catch(console.error);
-    }
-  }, [isOpen, products.length]);
 
   if (!isOpen) return null;
 

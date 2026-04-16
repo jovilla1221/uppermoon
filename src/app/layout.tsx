@@ -16,7 +16,7 @@ const notoSerif = Noto_Serif({
   style: ["normal", "italic"],
 });
 
-import { siteSettingsQuery } from "@/sanity/lib/queries";
+import { siteSettingsQuery, allProductsQuery } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
 
 export const metadata: Metadata = {
@@ -30,8 +30,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   let settings: any = null;
+  let products: any[] = [];
   try {
     settings = await client.fetch(siteSettingsQuery, {}, { next: { revalidate: 60 } });
+  } catch (e) { }
+
+  try {
+    products = await client.fetch(allProductsQuery, {}, { next: { revalidate: 60 } });
   } catch (e) { }
 
   return (
@@ -44,7 +49,7 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <CartProvider>
-          <Navbar logoUrl={settings?.logo || ""} />
+          <Navbar logoUrl={settings?.logo || ""} products={products} />
           {children}
           <Footer />
         </CartProvider>
