@@ -40,13 +40,13 @@ export default function Header({ onOpenCart, onOpenSearch, logoUrl }: { onOpenCa
           
           <div className="flex items-center gap-2">
             {user ? (
-              <div className="flex items-center gap-3">
-                <span className="hidden md:block font-label text-[0.625rem] uppercase tracking-widest text-[#000000]">
+              <div className="flex items-center gap-2 md:gap-3">
+                <span className="font-label text-[0.625rem] uppercase tracking-widest text-[#000000]">
                   Hai, {user.username}
                 </span>
                 <button 
                   onClick={logout}
-                  className="material-symbols-outlined text-[#000000] hover:text-primary transition-colors duration-150 text-2xl md:text-[26px]"
+                  className="material-symbols-outlined text-[#000000] hover:text-primary transition-colors duration-150 text-xl md:text-[26px]"
                   title="Logout"
                 >
                   logout

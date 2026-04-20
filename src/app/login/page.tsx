@@ -4,8 +4,11 @@ import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { useAuth } from "@/context/AuthContext";
+
 function LoginForm() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
 
@@ -34,6 +37,9 @@ function LoginForm() {
       if (!res.ok) {
         throw new Error(data.error || "Gagal masuk");
       }
+
+      // Refresh global user state immediately
+      await refreshUser();
 
       setSuccess("Login berhasil! Mengalihkan...");
       setTimeout(() => {
