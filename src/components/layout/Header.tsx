@@ -1,11 +1,14 @@
 "use client";
 
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
 
 export default function Header({ onOpenCart, onOpenSearch, logoUrl }: { onOpenCart: () => void, onOpenSearch: () => void, logoUrl?: string }) {
   const { currency, setCurrency } = useCart();
+  const { user, logout } = useAuth();
+
   return (
     <header className="sticky top-0 flex justify-between items-center px-4 md:px-8 py-2 md:py-3 w-full bg-white z-50 shadow-sm border-b border-surface-container">
       <div className="flex items-center gap-4">
@@ -34,7 +37,26 @@ export default function Header({ onOpenCart, onOpenSearch, logoUrl }: { onOpenCa
             {currency}
           </button>
           <button onClick={onOpenSearch} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 text-2xl md:text-[26px]">search</button>
-          <Link href="/login" className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center text-2xl md:text-[26px]">person</Link>
+          
+          <div className="flex items-center gap-2">
+            {user ? (
+              <div className="flex items-center gap-3">
+                <span className="hidden md:block font-label text-[0.625rem] uppercase tracking-widest text-[#000000]">
+                  Hai, {user.username}
+                </span>
+                <button 
+                  onClick={logout}
+                  className="material-symbols-outlined text-[#000000] hover:text-primary transition-colors duration-150 text-2xl md:text-[26px]"
+                  title="Logout"
+                >
+                  logout
+                </button>
+              </div>
+            ) : (
+              <Link href="/login" className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center text-2xl md:text-[26px]">person</Link>
+            )}
+          </div>
+
           <button onClick={onOpenCart} className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 text-2xl md:text-[26px]">shopping_bag</button>
         </div>
       </div>

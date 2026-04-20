@@ -16,6 +16,7 @@ const notoSerif = Noto_Serif({
   style: ["normal", "italic"],
 });
 
+import { AuthProvider } from "@/context/AuthContext";
 import { siteSettingsQuery, allProductsQuery } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
 
@@ -48,11 +49,13 @@ export default async function RootLayout({
         className={`${inter.variable} ${notoSerif.variable} antialiased bg-surface text-on-surface`}
         suppressHydrationWarning
       >
-        <CartProvider>
-          <Navbar logoUrl={settings?.logo || ""} products={products} />
-          {children}
-          <Footer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar logoUrl={settings?.logo || ""} products={products} />
+            {children}
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

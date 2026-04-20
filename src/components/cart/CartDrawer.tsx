@@ -2,9 +2,27 @@
 
 import Image from "next/image";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function CartDrawer() {
   const { isCartOpen, closeCart, cartItems, removeFromCart, updateQuantity, cartTotal, formatPrice, currency } = useCart();
+  const { user } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleCheckout = () => {
+    if (!user) {
+      closeCart();
+      // Redirect to login with callbackUrl back to current page
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+    
+    // Proceed to checkout (existing logic or next step)
+    console.log("Proceeding to checkout for user:", user.userId);
+    // window.location.href = "/checkout"; // Example
+  };
 
   if (!isCartOpen) return null;
 
@@ -97,6 +115,7 @@ export default function CartDrawer() {
             </div>
           </div>
           <button 
+            onClick={handleCheckout}
             disabled={cartItems.length === 0}
             className="w-full bg-primary text-on-primary font-label text-[0.75rem] tracking-[0.2em] font-bold py-5 hover:bg-primary-container disabled:opacity-50 disabled:hover:bg-primary transition-all duration-150 uppercase"
           >
