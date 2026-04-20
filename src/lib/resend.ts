@@ -17,8 +17,10 @@ export async function sendEmailOtpViaResend({
 }: SendEmailOtpParams): Promise<{ success: boolean; data?: any; error?: string }> {
   
   if (!process.env.RESEND_API_KEY) {
-    console.error('[RESEND] API Key is missing');
-    return { success: false, error: 'Konfigurasi Email (Resend) tidak lengkap' };
+    console.error('[RESEND] API Key is missing in environment variables');
+    return { success: false, error: 'Konfigurasi Email (Resend) tidak lengkap. Pastikan RESEND_API_KEY sudah diset di Vercel.' };
+  } else {
+    console.log('[RESEND] API Key detected (length: ' + process.env.RESEND_API_KEY.length + ')');
   }
 
   // By default, Resend testing mode ONLY works if sending from 'onboarding@resend.dev' 
