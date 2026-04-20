@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const session = request.cookies.get('session')?.value;
   const { pathname } = request.nextUrl;
 
@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
 
   // Redirect from login/register if already logged in
   if ((pathname === '/login' || pathname === '/register') && session) {
-    return NextResponse.redirect(new URL('/admin', request.url));
+    return NextResponse.redirect(new URL('/', request.url)); // Rollback changed to home as per user request
   }
 
   return NextResponse.next();
