@@ -37,7 +37,14 @@ function LoginForm() {
 
       setSuccess("Login berhasil! Mengalihkan...");
       setTimeout(() => {
-        router.push(callbackUrl);
+        let finalUrl = callbackUrl;
+        if (data.role === "admin" || data.role === "superadmin") {
+          finalUrl = searchParams.get("callbackUrl") || "/admin";
+        } else {
+          finalUrl = searchParams.get("callbackUrl") === "/admin" ? "/" : (searchParams.get("callbackUrl") || "/");
+        }
+
+        router.push(finalUrl);
         router.refresh();
       }, 1000);
     } catch (err: any) {
@@ -49,8 +56,8 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md bg-surface-container-lowest p-8 md:p-12 shadow-light border border-surface-container">
-      <h1 className="font-headline italic text-4xl mb-2 text-center">Admin Login</h1>
-      <p className="font-label text-xs tracking-[0.2em] uppercase text-outline text-center mb-10">Access the Dashboard</p>
+      <h1 className="font-headline italic text-4xl mb-2 text-center">Sign In</h1>
+      <p className="font-label text-xs tracking-[0.2em] uppercase text-outline text-center mb-10">Access your account</p>
 
       {error && (
         <div className="bg-error-container text-on-error-container p-4 mb-8 text-xs font-label uppercase tracking-widest text-center border border-error animate-shake">

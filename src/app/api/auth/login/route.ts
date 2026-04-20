@@ -65,7 +65,8 @@ export async function POST(request: Request) {
 
     const response = NextResponse.json({ 
       success: true, 
-      message: "Login berhasil" 
+      message: "Login berhasil",
+      role: user.role || (user._type === "adminUser" ? "admin" : "user")
     });
 
     response.headers.set("Set-Cookie", sessionCookie);
