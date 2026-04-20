@@ -14,5 +14,9 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+  document: {
+    // Ini memastikan aksi "Delete" tetap diproses oleh Sanity Studio
+    actions: (prev) => prev,
+  },
   basePath: "/studio",
 });
