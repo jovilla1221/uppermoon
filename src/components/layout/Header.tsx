@@ -40,17 +40,28 @@ export default function Header({ onOpenCart, onOpenSearch, logoUrl }: { onOpenCa
           
           <div className="flex items-center gap-2">
             {user ? (
-              <div className="flex items-center gap-2 md:gap-3">
-                <span className="font-label text-[0.625rem] uppercase tracking-widest text-[#000000]">
-                  Hai, {user.username}
-                </span>
-                <button 
-                  onClick={logout}
-                  className="material-symbols-outlined text-[#000000] hover:text-primary transition-colors duration-150 text-xl md:text-[26px]"
-                  title="Logout"
-                >
-                  logout
-                </button>
+              <div className="flex items-center gap-2 md:gap-4">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <span className="font-label text-[0.625rem] uppercase tracking-widest text-[#000000]">
+                    Hai, {user.username}
+                  </span>
+                  {(user.role === 'admin' || user.role === 'superadmin') && (
+                    <Link 
+                      href="/admin" 
+                      className="material-symbols-outlined text-[#000000] hover:text-primary transition-colors text-xl md:text-[26px]"
+                      title="Admin Dashboard"
+                    >
+                      dashboard
+                    </Link>
+                  )}
+                  <button 
+                    onClick={logout}
+                    className="material-symbols-outlined text-[#000000] hover:text-primary transition-colors duration-150 text-xl md:text-[26px]"
+                    title="Logout"
+                  >
+                    logout
+                  </button>
+                </div>
               </div>
             ) : (
               <Link href="/login" className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center text-2xl md:text-[26px]">person</Link>
