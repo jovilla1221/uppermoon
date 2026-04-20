@@ -4,11 +4,8 @@ import { comparePassword, setSessionCookie } from "@/lib/auth";
 import { writeClient } from "@/sanity/lib/writeClient";
 
 const LoginSchema = z.object({
-  email: z.string().email().optional(),
-  username: z.string().optional(),
+  identifier: z.string().min(1, "Email atau username wajib diisi"),
   password: z.string().min(8),
-}).refine(data => data.email || data.username, {
-  message: "Email or username is required",
 });
 
 export async function POST(request: Request) {
@@ -17,23 +14,24 @@ export async function POST(request: Request) {
     const parsed = LoginSchema.safeParse(body);
 
     if (!parsed.success) {
-      return NextResponse.json({ error: "Input tidak valid" }, { status: 400 });
+      return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
     }
 
-    const { email, username, password } = parsed.data;
+    const { identifier, password } = parsed.data;
 
     // Search for user in Sanity (supports both adminUser and siteUser)
-    // First try adminUser
-    const adminQuery = email 
-      ? `*[_type == "adminUser" && email == $email][0]` 
-      : `*[_type == "adminUser" && username == $username][0]`;
-    
-    let user = await writeClient.fetch(adminQuery, email ? { email } : { username });
+    // Try adminUser by email OR username
+    let user = await writeClient.fetch(
+      `*[_type == "adminUser" && (email == $identifier || username == $identifier)][0]`,
+      { identifier }
+    );
 
-    // If not found in admin, check general users (siteUser)
+    // If not found in admin, check general users (siteUser) by email
     if (!user) {
-      const userQuery = `*[_type == "siteUser" && email == $email][0]`;
-      user = await writeClient.fetch(userQuery, { email: email || username });
+      user = await writeClient.fetch(
+        `*[_type == "siteUser" && email == $identifier][0]`,
+        { identifier }
+      );
     }
 
     if (!user || !user.passwordHash) {

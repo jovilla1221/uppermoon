@@ -17,7 +17,7 @@ function LoginForm() {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Login Form State
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLoginSubmit = async (e: React.FormEvent) => {
@@ -29,7 +29,7 @@ function LoginForm() {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ identifier, password }),
       });
 
       const data = await res.json();
@@ -85,17 +85,17 @@ function LoginForm() {
 
       <form className="space-y-8" onSubmit={handleLoginSubmit}>
         <div className="space-y-2">
-          <label htmlFor="email" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary block">
-            Email Address
+          <label htmlFor="identifier" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary block">
+            Email or Username
           </label>
           <input 
-            type="email" 
-            id="email"
+            type="text" 
+            id="identifier"
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             className="w-full bg-transparent border-b border-outline-variant py-3 outline-none focus:border-primary transition-colors text-on-surface font-body"
-            placeholder="Enter your email"
+            placeholder="Enter your email or username"
           />
         </div>
 
