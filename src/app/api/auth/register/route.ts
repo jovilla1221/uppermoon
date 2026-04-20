@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { hashPassword } from "@/lib/auth";
 import { writeClient } from "@/sanity/lib/writeClient";
-import { sendEmailOtpViaFazpass } from "@/lib/fazpass";
+import { sendEmailOtpViaResend } from "@/lib/resend";
 import bcrypt from "bcrypt";
 
 const RegisterSchema = z.object({
@@ -63,17 +63,17 @@ export async function POST(request: Request) {
       attempts: 0,
     });
 
-    // Send via Fazpass
-    const fazpassResult = await sendEmailOtpViaFazpass({ 
+    // Send via Resend
+    const emailResult = await sendEmailOtpViaResend({ 
       email, 
       otp, 
       template: 'default' 
     });
 
-    if (!fazpassResult.success) {
-      console.error("[REGISTER_API] Fazpass error:", fazpassResult.error);
+    if (!emailResult.success) {
+      console.error("[REGISTER_API] Resend error:", emailResult.error);
       return NextResponse.json({ 
-        error: `Akun dibuat, tapi gagal mengirim email: ${fazpassResult.error || "Gagal terhubung ke Fazpass"}. Silakan coba login untuk kirim ulang.` 
+        error: `Akun dibuat, tapi gagal mengirim email: ${emailResult.error || "Gagal terhubung ke server email"}. Silakan coba login untuk kirim ulang.` 
       }, { status: 502 });
     }
 

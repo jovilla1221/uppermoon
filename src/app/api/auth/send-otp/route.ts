@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { writeClient } from "@/sanity/lib/writeClient";
-import { sendEmailOtpViaFazpass } from "@/lib/fazpass";
+import { sendEmailOtpViaResend } from "@/lib/resend";
 
 const SendOtpSchema = z.object({
   email: z.string().email(),
@@ -46,17 +46,17 @@ export async function POST(request: Request) {
       });
     }
 
-    // Send via Fazpass
-    const fazpassResult = await sendEmailOtpViaFazpass({ 
+    // Send via Resend
+    const emailResult = await sendEmailOtpViaResend({ 
       email, 
       otp, 
       template: 'admin-verify' 
     });
 
-    if (!fazpassResult.success) {
-      console.error("[SEND_OTP_API] Fazpass error:", fazpassResult.error);
+    if (!emailResult.success) {
+      console.error("[SEND_OTP_API] Resend error:", emailResult.error);
       return NextResponse.json({ 
-        error: `Gagal mengirim email: ${fazpassResult.error || "Gagal terhubung ke Fazpass"}` 
+        error: `Gagal mengirim email: ${emailResult.error || "Gagal terhubung ke server email"}` 
       }, { status: 502 });
     }
 
