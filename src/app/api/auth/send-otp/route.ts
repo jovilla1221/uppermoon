@@ -55,9 +55,9 @@ export async function POST(request: Request) {
 
     if (!fazpassResult.success) {
       console.error("[SEND_OTP_API] Fazpass error:", fazpassResult.error);
-      // In production, you might not want to disclose that Fazpass failed, 
-      // but for setup we'll return the error.
-      return NextResponse.json({ error: "Gagal mengirim email verifikasi" }, { status: 502 });
+      return NextResponse.json({ 
+        error: `Gagal mengirim email: ${fazpassResult.error || "Gagal terhubung ke Fazpass"}` 
+      }, { status: 502 });
     }
 
     return NextResponse.json({ 

@@ -72,7 +72,9 @@ export async function POST(request: Request) {
 
     if (!fazpassResult.success) {
       console.error("[REGISTER_API] Fazpass error:", fazpassResult.error);
-      return NextResponse.json({ error: "Akun dibuat, tapi gagal mengirim email verifikasi. Silakan login untuk kirim ulang." }, { status: 502 });
+      return NextResponse.json({ 
+        error: `Akun dibuat, tapi gagal mengirim email: ${fazpassResult.error || "Gagal terhubung ke Fazpass"}. Silakan coba login untuk kirim ulang.` 
+      }, { status: 502 });
     }
 
     return NextResponse.json({ 
