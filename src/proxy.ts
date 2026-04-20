@@ -5,9 +5,19 @@ function decodeJwtPayload(token: string): any {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
-    const payload = Buffer.from(parts[1], 'base64url').toString('utf8');
+    
+    // Base64URL to Base64
+    let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    
+    // Add padding if necessary
+    while (base64.length % 4 !== 0) {
+      base64 += '=';
+    }
+    
+    const payload = atob(base64);
     return JSON.parse(payload);
-  } catch {
+  } catch (err) {
+    console.error("[PROXY] Decode error:", err);
     return null;
   }
 }
