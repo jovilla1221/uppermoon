@@ -28,8 +28,19 @@ export function proxy(request: NextRequest) {
 
   // Protect Admin Routes - check both session existence AND admin role
   if (pathname.startsWith('/admin')) {
+    // Let the admin login page through
+    if (pathname === '/admin/login') {
+      if (session) {
+        const payload = decodeJwtPayload(session);
+        if (payload && (payload.role === 'admin' || payload.role === 'superadmin')) {
+          return NextResponse.redirect(new URL('/admin', request.url));
+        }
+      }
+      return NextResponse.next();
+    }
+
     if (!session) {
-      const loginUrl = new URL('/login', request.url);
+      const loginUrl = new URL('/admin/login', request.url);
       loginUrl.searchParams.set('callbackUrl', pathname);
       return NextResponse.redirect(loginUrl);
     }
@@ -55,5 +66,6 @@ export const config = {
     '/admin/:path*',
     '/login',
     '/register',
+    '/admin/login',
   ],
 };

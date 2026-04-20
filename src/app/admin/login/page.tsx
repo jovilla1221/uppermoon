@@ -3,20 +3,18 @@
 import { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-
 import { useAuth } from "@/context/AuthContext";
 
-function LoginForm() {
+function AdminLoginForm() {
   const router = useRouter();
   const { refreshUser } = useAuth();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || "/admin";
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Login Form State
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
 
@@ -35,22 +33,19 @@ function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Gagal masuk");
+        throw new Error(data.error || "Gagal masuk ke dashboard");
       }
 
-      // Refresh global user state immediately
+      // Check if user is actually an admin
+      if (data.role !== "admin" && data.role !== "superadmin") {
+        throw new Error("Anda tidak memiliki hak akses admin.");
+      }
+
       await refreshUser();
-
-      setSuccess("Login berhasil! Mengalihkan...");
+      setSuccess("Login berhasil! Mengalihkan ke Dashboard...");
+      
       setTimeout(() => {
-        let finalUrl = callbackUrl;
-        if (data.role === "admin" || data.role === "superadmin") {
-          finalUrl = searchParams.get("callbackUrl") || "/admin";
-        } else {
-          finalUrl = searchParams.get("callbackUrl") === "/admin" ? "/" : (searchParams.get("callbackUrl") || "/");
-        }
-
-        router.push(finalUrl);
+        router.push(callbackUrl.startsWith("/admin") ? callbackUrl : "/admin");
         router.refresh();
       }, 1000);
     } catch (err: any) {
@@ -61,9 +56,15 @@ function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-surface-container-lowest p-8 md:p-12 shadow-light border border-surface-container">
-      <h1 className="font-headline italic text-4xl mb-2 text-center">Sign In</h1>
-      <p className="font-label text-xs tracking-[0.2em] uppercase text-outline text-center mb-10">Access your account</p>
+    <div className="w-full max-w-md bg-white p-8 md:p-12 shadow-2xl border border-surface-container">
+      <div className="flex justify-center mb-8">
+        <div className="bg-primary text-on-primary p-4 rounded-full">
+          <span className="material-symbols-outlined text-4xl">admin_panel_settings</span>
+        </div>
+      </div>
+      
+      <h1 className="font-headline italic text-4xl mb-2 text-center text-[#000000]">Admin Login</h1>
+      <p className="font-label text-xs tracking-[0.2em] uppercase text-outline text-center mb-10">Access the Dashboard</p>
 
       {error && (
         <div className="bg-error-container text-on-error-container p-4 mb-8 text-xs font-label uppercase tracking-widest text-center border border-error animate-shake">
@@ -80,65 +81,60 @@ function LoginForm() {
       <form className="space-y-8" onSubmit={handleLoginSubmit}>
         <div className="space-y-2">
           <label htmlFor="identifier" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary block">
-            Email or Username
+            Username or Email
           </label>
           <input 
             type="text" 
             id="identifier"
             required
+            autoComplete="username"
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             className="w-full bg-transparent border-b border-outline-variant py-3 outline-none focus:border-primary transition-colors text-on-surface font-body"
-            placeholder="Enter your email or username"
+            placeholder="admin1"
           />
         </div>
 
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label htmlFor="password" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary block">
-              Password
-            </label>
-            <Link href="#" className="font-label text-[0.625rem] text-secondary hover:text-primary transition-colors underline">
-              FORGOT?
-            </Link>
-          </div>
+          <label htmlFor="password" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary block">
+            Password
+          </label>
           <input 
             type="password" 
             id="password"
             required
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full bg-transparent border-b border-outline-variant py-3 outline-none focus:border-primary transition-colors text-on-surface font-body"
-            placeholder="Enter your password"
+            placeholder="********"
           />
         </div>
 
         <button 
           type="submit"
           disabled={loading}
-          className="w-full bg-primary text-on-primary py-5 font-label text-[0.6875rem] font-bold tracking-[0.2em] uppercase hover:bg-primary-container transition-colors mt-4 disabled:opacity-50"
+          className="w-full bg-primary text-on-primary py-5 font-label text-[0.6875rem] font-bold tracking-[0.2em] uppercase hover:bg-black transition-colors mt-4 disabled:opacity-50"
         >
-          {loading ? "PROCESSING..." : "SIGN IN"}
+          {loading ? "AUTHENTICATING..." : "LOGIN TO DASHBOARD"}
         </button>
       </form>
 
-      <div className="mt-10 text-center border-t border-surface-container pt-8">
-        <p className="font-label text-[0.6875rem] tracking-widest uppercase text-secondary">
-          Don't have an account?{" "}
-          <Link href="/register" className="text-primary font-bold hover:opacity-70 transition-opacity">
-            CREATE ONE
-          </Link>
-        </p>
+      <div className="mt-10 text-center">
+        <Link href="/" className="font-label text-[0.625rem] text-secondary hover:text-primary transition-colors uppercase tracking-widest flex items-center justify-center gap-2">
+          <span className="material-symbols-outlined text-sm">arrow_back</span>
+          Back to Website
+        </Link>
       </div>
     </div>
   );
 }
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   return (
-    <main className="min-h-[80vh] flex items-center justify-center px-6 py-24 animate-[fade-up-slide_0.8s_forwards]">
+    <main className="min-h-screen bg-surface-container-lowest flex items-center justify-center px-6 py-12">
       <Suspense fallback={<div className="text-secondary font-label text-xs uppercase tracking-widest">Loading...</div>}>
-        <LoginForm />
+        <AdminLoginForm />
       </Suspense>
     </main>
   );

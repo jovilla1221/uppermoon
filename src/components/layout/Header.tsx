@@ -64,7 +64,13 @@ export default function Header({ onOpenCart, onOpenSearch, logoUrl }: { onOpenCa
                 </div>
               </div>
             ) : (
-              <Link href="/login" className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center text-2xl md:text-[26px]">person</Link>
+              <Link 
+                href="/login" 
+                className="material-symbols-outlined text-[#000000] hover:opacity-70 transition-opacity duration-150 flex items-center justify-center text-2xl md:text-[26px]"
+                title="Customer Login"
+              >
+                person
+              </Link>
             )}
           </div>
 
