@@ -6,7 +6,7 @@ import { writeClient } from "@/sanity/lib/writeClient";
 const LoginSchema = z.object({
   email: z.string().email().optional(),
   username: z.string().optional(),
-  password: z.string().min(6),
+  password: z.string().min(8),
 }).refine(data => data.email || data.username, {
   message: "Email or username is required",
 });
@@ -55,18 +55,21 @@ export async function POST(request: Request) {
       }, { status: 403 });
     }
 
+    // Determine the correct role
+    const resolvedRole = user.role || (user._type === "adminUser" ? "admin" : "user");
+
     // Success - Set session cookie directly for admin or verified user
     const sessionCookie = setSessionCookie({
       userId: user._id,
       username: user.username || user.fullName,
       email: user.email,
-      role: user.role || "user",
+      role: resolvedRole,
     });
 
     const response = NextResponse.json({ 
       success: true, 
       message: "Login berhasil",
-      role: user.role || (user._type === "adminUser" ? "admin" : "user")
+      role: resolvedRole
     });
 
     response.headers.set("Set-Cookie", sessionCookie);

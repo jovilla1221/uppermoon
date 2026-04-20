@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const [step, setStep] = useState<"register" | "otp">("register");
   const [loading, setLoading] = useState(false);
@@ -83,6 +85,7 @@ export default function RegisterPage() {
       }
 
       setSuccess("Verifikasi berhasil! Akun Anda aktif.");
+      await refreshUser();
       setTimeout(() => {
         router.push("/"); // Redirect to homepage
         router.refresh();

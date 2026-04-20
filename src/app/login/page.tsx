@@ -10,7 +10,7 @@ function LoginForm() {
   const router = useRouter();
   const { refreshUser } = useAuth();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/admin";
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
