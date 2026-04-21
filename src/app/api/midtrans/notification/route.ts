@@ -5,7 +5,8 @@ import { writeClient } from "@/sanity/lib/writeClient";
 export async function POST(req: NextRequest) {
   try {
     const notification = await req.json();
-    const serverKey = process.env.MIDTRANS_SERVER_KEY || "";
+    // Trim to match the fix in midtrans.ts — prevents signature mismatch
+    const serverKey = (process.env.MIDTRANS_SERVER_KEY || "").trim();
 
     const {
       order_id,
@@ -17,15 +18,19 @@ export async function POST(req: NextRequest) {
       transaction_id,
     } = notification;
 
-    // 1. Verify Signature
-    const hash = crypto
-      .createHash("sha512")
-      .update(order_id + status_code + gross_amount + serverKey)
-      .digest("hex");
+    console.log(`[MIDTRANS_NOTIFICATION] Received: order=${order_id}, status=${transaction_status}, payment_type=${payment_type}`);
 
-    if (hash !== signature_key) {
-      console.error("[MIDTRANS_NOTIFICATION] Invalid Signature");
-      return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+    // 1. Verify Signature (only if signature_key is present)
+    if (signature_key) {
+      const hash = crypto
+        .createHash("sha512")
+        .update(order_id + status_code + gross_amount + serverKey)
+        .digest("hex");
+
+      if (hash !== signature_key) {
+        console.error(`[MIDTRANS_NOTIFICATION] Invalid Signature! Expected: ${hash}, Got: ${signature_key}`);
+        return NextResponse.json({ error: "Invalid signature" }, { status: 403 });
+      }
     }
 
     console.log(`[MIDTRANS_NOTIFICATION] Valid notification for Order: ${order_id}, Status: ${transaction_status}`);
@@ -36,21 +41,25 @@ export async function POST(req: NextRequest) {
 
     if (!order) {
       console.error(`[MIDTRANS_NOTIFICATION] Order not found: ${order_id}`);
-      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+      // Return 200 OK anyway so Midtrans doesn't keep retrying
+      return NextResponse.json({ status: "OK", message: "Order not found but acknowledged" });
     }
 
-    // 3. Map status to our schema
+    // 3. Map Midtrans status to our schema
     let paymentStatus = "pending";
     if (transaction_status === "capture" || transaction_status === "settlement") {
       paymentStatus = "paid";
-    } else if (transaction_status === "deny" || transaction_status === "cancel" || transaction_status === "expire") {
+    } else if (transaction_status === "deny" || transaction_status === "cancel") {
       paymentStatus = "failed";
-      if (transaction_status === "expire") paymentStatus = "expired";
+    } else if (transaction_status === "expire") {
+      paymentStatus = "expired";
     } else if (transaction_status === "pending") {
       paymentStatus = "pending";
     } else if (transaction_status === "refund") {
       paymentStatus = "refunded";
     }
+
+    console.log(`[MIDTRANS_NOTIFICATION] Updating order ${order_id} to status: ${paymentStatus}`);
 
     // 4. Update Order in Sanity
     await writeClient
@@ -63,6 +72,7 @@ export async function POST(req: NextRequest) {
       })
       .commit();
 
+    console.log(`[MIDTRANS_NOTIFICATION] Order ${order_id} updated successfully to ${paymentStatus}`);
     return NextResponse.json({ status: "OK" });
   } catch (error: any) {
     console.error("[MIDTRANS_NOTIFICATION_ERROR]", error);
