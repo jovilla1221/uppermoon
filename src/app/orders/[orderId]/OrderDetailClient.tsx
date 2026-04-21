@@ -39,14 +39,40 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
   }, [order.paymentStatus, order.orderId]);
 
   const handleRetryPayment = () => {
-    if (!order.snapToken) return alert("Snap token missing. Please contact support.");
+    if (!order.snapToken) {
+      alert("Snap token is missing. Please contact support.");
+      return;
+    }
     
-    setIsRetrying(true);
-    window.snap.pay(order.snapToken, {
-      onSuccess: () => { router.refresh(); },
-      onPending: () => { router.refresh(); },
-      onClose: () => { setIsRetrying(false); }
-    });
+    if (typeof window === "undefined" || !window.snap) {
+      alert("Memuat sistem pembayaran lambat atau diblokir oleh AdBlocker di browser Anda. Harap matikan AdBlock/Brave Shields untuk website ini atau tunggu sebentar.");
+      return;
+    }
+
+    try {
+      setIsRetrying(true);
+      window.snap.pay(order.snapToken, {
+        onSuccess: () => { 
+          setIsRetrying(false);
+          router.refresh(); 
+        },
+        onPending: () => { 
+          setIsRetrying(false);
+          router.refresh(); 
+        },
+        onClose: () => { 
+          setIsRetrying(false); 
+        },
+        onError: () => {
+          setIsRetrying(false);
+          alert("Pembayaran gagal dijalankan. Silakan coba lagi.");
+        }
+      });
+    } catch (err) {
+      setIsRetrying(false);
+      console.error(err);
+      alert("Gagal memanggil popup pembayaran. Coba refresh halaman.");
+    }
   };
 
   const getStatusColor = (status: string) => {
