@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       orderId,
+      _id: createdOrder._id,
       snapToken: transaction.token,
     });
   } catch (error: any) {

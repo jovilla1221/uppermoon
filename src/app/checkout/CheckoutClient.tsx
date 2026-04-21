@@ -88,16 +88,23 @@ export default function CheckoutClient() {
         throw new Error(data.error || "Failed to create order");
       }
 
-      const { snapToken, orderId } = data;
+      const { snapToken, orderId, _id } = data;
 
       window.snap.pay(snapToken, {
-        onSuccess: (result: any) => {
-          console.log("Success", result);
+        onSuccess: async (result: any) => {
+          setIsProcessing(true);
+          try {
+             await fetch("/api/admin/orders", {
+               method: "PATCH",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify({ id: _id, paymentStatus: "paid" })
+             });
+          } catch(e) {}
+          
           clearCart?.(); // We'll add this to context
           router.push(`/orders/${orderId}`);
         },
-        onPending: (result: any) => {
-          console.log("Pending", result);
+        onPending: async (result: any) => {
           clearCart?.();
           router.push(`/orders/${orderId}`);
         },

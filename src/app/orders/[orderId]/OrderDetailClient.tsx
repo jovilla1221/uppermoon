@@ -19,6 +19,11 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
   const [isRetrying, setIsRetrying] = useState(false);
   const router = useRouter();
 
+  // Sync state if server component passes new initialOrder (due to router.refresh)
+  useEffect(() => {
+    setOrder(initialOrder);
+  }, [initialOrder]);
+
   // Polling for status updates if pending
   useEffect(() => {
     if (order.paymentStatus === "pending") {
@@ -33,7 +38,7 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
         } catch (err) {
           console.error("Status check failed", err);
         }
-      }, 5000);
+      }, 2000); // Poll every 2s for faster update if page just loaded
       return () => clearInterval(interval);
     }
   }, [order.paymentStatus, order.orderId]);
@@ -54,6 +59,16 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
       window.snap.pay(order.snapToken, {
         onSuccess: () => { 
           setIsRetrying(false);
+          // Optimistic UI Update
+          setOrder((prev: any) => ({ ...prev, paymentStatus: "paid" }));
+          
+          // Optionally trigger backend refresh
+          fetch(`/api/admin/orders`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: order._id, paymentStatus: "paid" })
+          }).catch(() => {});
+          
           router.refresh(); 
         },
         onPending: () => { 
