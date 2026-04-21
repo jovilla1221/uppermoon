@@ -78,3 +78,40 @@ export const productsByCategoryQuery = groq`
     }
   }
 `;
+
+// Get orders by user
+export const ordersByUserQuery = groq`
+  *[_type == "order" && user._ref == $userId] | order(createdAt desc) {
+    _id,
+    orderId,
+    customerName,
+    items,
+    totalAmount,
+    paymentStatus,
+    createdAt
+  }
+`;
+
+// Get single order by orderId
+export const orderByIdQuery = groq`
+  *[_type == "order" && orderId == $orderId][0] {
+    ...,
+    "user": user->{fullName, email}
+  }
+`;
+
+// Get all orders (admin)
+export const allOrdersQuery = groq`
+  *[_type == "order"] | order(createdAt desc) {
+    _id,
+    orderId,
+    customerName,
+    customerEmail,
+    customerPhone,
+    shippingAddress,
+    items,
+    totalAmount,
+    paymentStatus,
+    createdAt
+  }
+`;

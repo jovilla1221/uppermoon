@@ -20,7 +20,8 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState("");
 
   const [products, setProducts] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"products" | "settings">("products");
+  const [orders, setOrders] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"products" | "settings" | "orders">("products");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -80,6 +81,18 @@ export default function AdminPage() {
     setLoading(false);
   };
 
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/orders");
+      const data = await res.json();
+      setOrders(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
+  };
+
   const fetchSettings = async () => {
     const res = await fetch("/api/admin/settings");
     const data = await res.json();
@@ -97,8 +110,9 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    if (isLoggedIn && activeTab === "settings") {
-      fetchSettings();
+    if (isLoggedIn) {
+      if (activeTab === "settings") fetchSettings();
+      if (activeTab === "orders") fetchOrders();
     }
   }, [isLoggedIn, activeTab]);
 
@@ -305,6 +319,19 @@ export default function AdminPage() {
     }
   };
 
+  const handleUpdateOrderStatus = async (id: string, status: string) => {
+    const res = await fetch("/api/admin/orders", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, paymentStatus: status }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setMessage("✅ Status pesanan berhasil diperbarui");
+      fetchOrders();
+    }
+  };
+
   const uploadSingleSettingImage = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -429,6 +456,12 @@ export default function AdminPage() {
               PRODUK
             </button>
             <button 
+              onClick={() => setActiveTab("orders")}
+              className={`text-xs tracking-widest uppercase transition-colors px-3 py-2 ${activeTab === "orders" ? "text-white bg-neutral-900" : "text-neutral-500 hover:text-white"}`}
+            >
+              ORDER
+            </button>
+            <button 
               onClick={() => setActiveTab("settings")}
               className={`text-xs tracking-widest uppercase transition-colors px-3 py-2 ${activeTab === "settings" ? "text-white bg-neutral-900" : "text-neutral-500 hover:text-white"}`}
             >
@@ -449,6 +482,7 @@ export default function AdminPage() {
       {/* Mobile nav (visible only on small screens) */}
       <div className="md:hidden flex border-b border-neutral-800 px-6 bg-neutral-950">
         <button onClick={() => setActiveTab("products")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "products" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>PRODUK</button>
+        <button onClick={() => setActiveTab("orders")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "orders" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>ORDER</button>
         <button onClick={() => setActiveTab("settings")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "settings" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>PENGATURAN</button>
       </div>
 
@@ -835,6 +869,108 @@ export default function AdminPage() {
                 {uploading ? "MENYIMPAN..." : "SIMPAN SEMUA PENGATURAN"}
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Orders Tab */}
+        {activeTab === "orders" && (
+          <div>
+            <div className="mb-8 flex justify-between items-end">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">Manajemen Pesanan</h2>
+                <p className="text-xs text-neutral-500 mt-1">Total {orders.length} pesanan masuk</p>
+              </div>
+              <button 
+                onClick={fetchOrders}
+                className="text-[10px] tracking-widest uppercase text-neutral-400 hover:text-white transition-colors border border-neutral-800 px-4 py-2"
+              >
+                REFRESH
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-20 text-neutral-500">Memuat pesanan...</div>
+            ) : orders.length === 0 ? (
+              <div className="text-center py-20 border border-dashed border-neutral-800 text-neutral-500">
+                Belum ada pesanan masuk.
+              </div>
+            ) : (
+              <div className="space-y-6 pb-20">
+                {orders.map((order) => (
+                  <div key={order._id} className="bg-neutral-900 border border-neutral-800 p-6 hover:border-neutral-700 transition-colors">
+                    <div className="flex flex-col md:flex-row justify-between gap-4 mb-6 border-b border-neutral-800 pb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="text-sm font-black text-white">{order.orderId}</span>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase font-bold border ${
+                            order.paymentStatus === 'paid' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
+                            order.paymentStatus === 'failed' ? 'bg-red-500/10 text-red-500 border-red-500/20' : 
+                            'bg-orange-500/10 text-orange-500 border-orange-500/20'
+                          }`}>
+                            {order.paymentStatus}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest">{new Date(order.createdAt).toLocaleString()}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-widest mb-1">Total Transaksi</p>
+                        <p className="text-lg font-black text-white">Rp {order.totalAmount?.toLocaleString('id-ID')}</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div>
+                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400 mb-4">Detail Pengiriman</h4>
+                        <div className="space-y-1 text-xs text-neutral-300 uppercase tracking-wide">
+                          <p><span className="text-neutral-500">NAMA:</span> {order.customerName}</p>
+                          <p><span className="text-neutral-500">EMAIL:</span> {order.customerEmail}</p>
+                          <p><span className="text-neutral-500">TELP:</span> {order.customerPhone}</p>
+                          {order.shippingAddress && (
+                            <>
+                              <p><span className="text-neutral-500">ALAMAT:</span> {order.shippingAddress.street}</p>
+                              <p>{order.shippingAddress.city}, {order.shippingAddress.province} {order.shippingAddress.postalCode}</p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400 mb-4">Item Pesanan</h4>
+                        <div className="space-y-3">
+                          {order.items?.map((item: any, idx: number) => (
+                            <div key={idx} className="flex gap-3 items-center text-xs">
+                              <div className="w-10 h-12 bg-neutral-800 shrink-0">
+                                <img src={item.image} alt="" className="w-full h-full object-cover grayscale" />
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-bold text-white truncate">{item.productName}</p>
+                                <p className="text-neutral-500">{item.size} × {item.quantity}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-8 pt-4 border-t border-neutral-800 flex flex-wrap gap-3">
+                      <select 
+                        defaultValue={order.paymentStatus}
+                        onChange={(e) => handleUpdateOrderStatus(order._id, e.target.value)}
+                        className="bg-black border border-neutral-700 text-[10px] font-bold tracking-widest uppercase px-4 py-2 focus:outline-none focus:border-white transition-colors"
+                      >
+                        <option value="pending">PENDING</option>
+                        <option value="paid">PAID / SETTLED</option>
+                        <option value="failed">FAILED</option>
+                        <option value="shipped">SHIPPED</option>
+                        <option value="cancelled">CANCELLED</option>
+                      </select>
+                      <button className="text-[10px] tracking-widest uppercase text-neutral-500 hover:text-white transition-colors border border-neutral-800 px-4 py-2 ml-auto">
+                        PRINT INVOICE
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </main>

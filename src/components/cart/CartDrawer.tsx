@@ -14,14 +14,12 @@ export default function CartDrawer() {
   const handleCheckout = () => {
     if (!user) {
       closeCart();
-      // Redirect to login with callbackUrl back to current page
       router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
     
-    // Proceed to checkout (existing logic or next step)
-    console.log("Proceeding to checkout for user:", user.userId);
-    // window.location.href = "/checkout"; // Example
+    closeCart();
+    router.push("/checkout");
   };
 
   if (!isCartOpen) return null;

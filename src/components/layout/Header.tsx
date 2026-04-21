@@ -42,9 +42,16 @@ export default function Header({ onOpenCart, onOpenSearch, logoUrl }: { onOpenCa
             {user ? (
               <div className="flex items-center gap-2 md:gap-4">
                 <div className="flex items-center gap-2 md:gap-3">
-                  <span className="font-label text-[0.625rem] uppercase tracking-widest text-[#000000]">
+                   <span className="font-label text-[0.625rem] uppercase tracking-widest text-[#000000]">
                     Hai, {user.username}
                   </span>
+                  <Link 
+                    href="/orders" 
+                    className="material-symbols-outlined text-[#000000] hover:text-primary transition-colors text-xl md:text-[26px]"
+                    title="My Orders"
+                  >
+                    receipt
+                  </Link>
                   {(user.role === 'admin' || user.role === 'superadmin') && (
                     <Link 
                       href="/admin" 

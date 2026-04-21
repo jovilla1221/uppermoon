@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Serif } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -44,6 +45,11 @@ export default async function RootLayout({
     <html lang="en" className="light" suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+        <Script
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="beforeInteractive"
+        />
       </head>
       <body
         className={`${inter.variable} ${notoSerif.variable} antialiased bg-surface text-on-surface`}
