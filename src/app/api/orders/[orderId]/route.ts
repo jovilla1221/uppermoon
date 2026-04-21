@@ -6,7 +6,7 @@ import { orderByIdQuery } from "@/sanity/lib/queries";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { orderId: string } }
+  { params }: { params: Promise<{ orderId: string }> }
 ) {
   try {
     const { orderId } = await params;
