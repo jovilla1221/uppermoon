@@ -332,6 +332,22 @@ export default function AdminPage() {
     }
   };
 
+  const handleDeleteOrder = async (id: string, orderId: string) => {
+    if (!confirm(`Hapus pesanan ${orderId}? Tindakan ini tidak dapat dibatalkan.`)) return;
+    const res = await fetch("/api/admin/orders", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setMessage("🗑️ Pesanan berhasil dihapus");
+      fetchOrders();
+    } else {
+      setMessage("❌ Gagal menghapus pesanan");
+    }
+  };
+
   const uploadSingleSettingImage = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -965,6 +981,12 @@ export default function AdminPage() {
                       </select>
                       <button className="text-[10px] tracking-widest uppercase text-neutral-500 hover:text-white transition-colors border border-neutral-800 px-4 py-2 ml-auto">
                         PRINT INVOICE
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteOrder(order._id, order.orderId)}
+                        className="text-[10px] tracking-widest uppercase text-red-500 hover:text-red-400 border border-neutral-800 hover:border-red-900 hover:bg-neutral-900 transition-colors px-4 py-2"
+                      >
+                        HAPUS
                       </button>
                     </div>
                   </div>

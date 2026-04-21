@@ -32,3 +32,20 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Missing order ID" }, { status: 400 });
+    }
+
+    await writeClient.delete(id);
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error("[ADMIN_ORDERS_DELETE_ERROR]", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
