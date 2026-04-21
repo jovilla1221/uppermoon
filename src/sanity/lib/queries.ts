@@ -96,7 +96,9 @@ export const ordersByUserQuery = groq`
 export const orderByIdQuery = groq`
   *[_type == "order" && orderId == $orderId][0] {
     ...,
-    "user": user->{fullName, email}
+    user {
+      _ref
+    }
   }
 `;
 
