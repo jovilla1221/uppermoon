@@ -9,7 +9,7 @@ export default function RegisterClient() {
   const router = useRouter();
   const { refreshUser } = useAuth();
 
-  const [step, setStep] = useState<"register" | "otp">("register");
+  const [step, setStep] = useState<"register" | "otp" | "expired">("register");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -28,7 +28,16 @@ export default function RegisterClient() {
     let interval: NodeJS.Timeout;
     if (timer > 0) {
       interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
+        setTimer((prev) => {
+          if (prev <= 1) {
+            // Timer expired — switch to expired state
+            setStep("expired");
+            setError(null);
+            setSuccess(null);
+            return 0;
+          }
+          return prev - 1;
+        });
       }, 1000);
     }
     return () => clearInterval(interval);
@@ -54,8 +63,8 @@ export default function RegisterClient() {
       }
 
       setStep("otp");
-      setTimer(300); // 5 minutes
-      setSuccess("Kode verifikasi telah dikirim ke email Anda.");
+      setTimer(600); // 10 minutes
+      setSuccess("Kode verifikasi telah dikirim ke email Anda. Cek juga folder Spam.");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -92,6 +101,8 @@ export default function RegisterClient() {
       }, 2000);
     } catch (err: any) {
       setError(err.message);
+      setOtp(["", "", "", "", "", ""]);
+      setTimeout(() => document.getElementById("otp-0")?.focus(), 100);
     } finally {
       setLoading(false);
     }
@@ -122,6 +133,7 @@ export default function RegisterClient() {
   const resendOtp = async () => {
     if (timer > 0) return;
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
@@ -129,8 +141,11 @@ export default function RegisterClient() {
         body: JSON.stringify({ email }),
       });
       if (!res.ok) throw new Error("Gagal mengirim ulang OTP");
-      setTimer(300);
-      setSuccess("Kode verifikasi baru telah dikirim.");
+      setTimer(600); // 10 minutes
+      setStep("otp");
+      setOtp(["", "", "", "", "", ""]);
+      setSuccess("Kode verifikasi baru telah dikirim. Cek juga folder Spam.");
+      setTimeout(() => document.getElementById("otp-0")?.focus(), 100);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -142,11 +157,13 @@ export default function RegisterClient() {
     <main className="min-h-[80vh] flex items-center justify-center px-6 py-24 animate-[fade-up-slide_0.8s_forwards]">
       <div className="w-full max-w-md bg-surface-container-lowest p-8 md:p-12 shadow-light border border-surface-container">
         <h1 className="font-headline italic text-4xl mb-2 text-center">
-          {step === "register" ? "Create Account" : "Verify Email"}
+          {step === "register" ? "Create Account" : step === "expired" ? "Code Expired" : "Verify Email"}
         </h1>
         <p className="font-label text-xs tracking-[0.2em] uppercase text-outline text-center mb-10">
           {step === "register" 
             ? "Join the UPPERMOON Community" 
+            : step === "expired"
+            ? "Kode verifikasi sudah kedaluwarsa"
             : `Enter the code sent to ${email}`}
         </p>
 
@@ -217,7 +234,7 @@ export default function RegisterClient() {
               {loading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}
             </button>
           </form>
-        ) : (
+        ) : step === "otp" ? (
           <form className="space-y-10" onSubmit={handleOtpSubmit}>
             <div className="flex justify-between gap-2">
               {otp.map((digit, idx) => (
@@ -266,7 +283,29 @@ export default function RegisterClient() {
               </button>
             </div>
           </form>
-        )}
+        ) : step === "expired" ? (
+          <div className="space-y-8 text-center">
+            <div className="bg-error-container text-on-error-container p-6 text-xs font-label uppercase tracking-widest border border-error">
+              Kode verifikasi sudah kedaluwarsa. Silakan kirim ulang kode baru.
+            </div>
+            <button
+              type="button"
+              onClick={resendOtp}
+              disabled={loading}
+              className="w-full bg-primary text-on-primary py-5 font-label text-[0.6875rem] font-bold tracking-[0.2em] uppercase hover:bg-primary-container transition-colors disabled:opacity-50"
+            >
+              {loading ? "MENGIRIM..." : "KIRIM ULANG KODE"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setStep("register"); setError(null); setSuccess(null); }}
+              className="block w-full text-secondary font-label text-[0.625rem] uppercase tracking-widest hover:text-primary"
+            >
+              Kembali ke Registrasi
+            </button>
+          </div>
+        ) : null}
+
 
         <div className="mt-10 text-center border-t border-surface-container pt-8">
           <p className="font-label text-[0.6875rem] tracking-widest uppercase text-secondary">

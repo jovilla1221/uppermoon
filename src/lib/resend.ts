@@ -27,6 +27,7 @@ export async function sendEmailOtpViaResend({
   // TO the exact email address you used to register the Resend account.
   // We use this as a safe fallback until you add a verified domain (like noreply@yourdomain.com).
   const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@uppermoon.store';
+  const FROM_NAME = 'UPPERMOON';
 
   const htmlContent = template === 'admin-verify'
     ? `
@@ -36,7 +37,7 @@ export async function sendEmailOtpViaResend({
         <div style="background:#f3f4f6;padding:16px;border-radius:8px;text-align:center">
           <span style="font-size:32px;font-weight:700;letter-spacing:8px;color:#111827">${otp}</span>
         </div>
-        <p style="color:#6b7280;font-size:14px;margin:24px 0 0">Kode berlaku 5 menit. Jangan bagikan ke siapapun.</p>
+        <p style="color:#6b7280;font-size:14px;margin:24px 0 0">Kode berlaku 10 menit. Jangan bagikan ke siapapun.</p>
       </div>
     `
     : `
@@ -46,13 +47,13 @@ export async function sendEmailOtpViaResend({
         <div style="background:#f3f4f6;padding:16px;border-radius:8px;text-align:center">
           <span style="font-size:32px;font-weight:700;letter-spacing:8px;color:#111827">${otp}</span>
         </div>
-        <p style="color:#6b7280;font-size:14px;margin:24px 0 0">Berlaku 5 menit. Abaikan email ini jika Anda tidak mendaftar.</p>
+        <p style="color:#6b7280;font-size:14px;margin:24px 0 0">Berlaku 10 menit. Abaikan email ini jika Anda tidak mendaftar.</p>
       </div>
     `;
 
   try {
     const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
+      from: `${FROM_NAME} <${FROM_EMAIL}>`,
       to: email, // this will send the email exactly to the user who registered
       subject: template === 'admin-verify' ? 'Kode Verifikasi Admin' : 'Verifikasi Akun UPPERMOON',
       html: htmlContent,

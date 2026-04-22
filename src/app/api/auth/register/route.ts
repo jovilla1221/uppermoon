@@ -32,8 +32,50 @@ export async function POST(request: Request) {
       { email }
     );
 
-    if (existingAdmin || existingUser) {
+    if (existingAdmin) {
       return NextResponse.json({ error: "Email sudah terdaftar" }, { status: 400 });
+    }
+
+    // If user exists but not verified, allow re-registration:
+    // update their data, generate new OTP, and send again
+    if (existingUser && existingUser.isVerified) {
+      return NextResponse.json({ error: "Email sudah terdaftar" }, { status: 400 });
+    }
+
+    if (existingUser && !existingUser.isVerified) {
+      // Update existing unverified user's data
+      const passwordHash = await hashPassword(password);
+      await writeClient.patch(existingUser._id).set({ fullName, passwordHash }).commit();
+
+      // Generate new OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpHash = await bcrypt.hash(otp, 12);
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+      // Upsert OTP record
+      const existingOtp = await writeClient.fetch(
+        `*[_type == "otpRecord" && email == $email][0]`,
+        { email }
+      );
+      if (existingOtp) {
+        await writeClient.patch(existingOtp._id).set({ otpHash, expiresAt, attempts: 0 }).commit();
+      } else {
+        await writeClient.create({ _type: "otpRecord", email, otpHash, expiresAt, attempts: 0 });
+      }
+
+      // Send email
+      const emailResult = await sendEmailOtpViaResend({ email, otp, template: 'default' });
+      if (!emailResult.success) {
+        return NextResponse.json({ 
+          error: `Gagal mengirim email verifikasi: ${emailResult.error || "Server email error"}` 
+        }, { status: 502 });
+      }
+
+      return NextResponse.json({ 
+        success: true, 
+        message: "Kode verifikasi baru telah dikirim ke email Anda.",
+        email 
+      });
     }
 
     // Hash password
@@ -52,7 +94,7 @@ export async function POST(request: Request) {
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHash = await bcrypt.hash(otp, 12);
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
     // Store OTP in Sanity
     await writeClient.create({
