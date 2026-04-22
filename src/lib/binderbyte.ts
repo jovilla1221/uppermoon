@@ -194,7 +194,7 @@ const MOCK_TRACKING_DATA: TrackingResult = {
     service: "SIUNT",
     status: "DELIVERED",
     date: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }),
-    desc: "Paket telah diterima oleh [Filla Saputro]",
+    desc: "Paket telah diterima oleh [Jimmy]",
     amount: "Rp 15.000",
     weight: "1 Kg",
   },
@@ -207,7 +207,7 @@ const MOCK_TRACKING_DATA: TrackingResult = {
   history: [
     {
       date: new Date().toISOString().split('T')[0] + " 14:20",
-      desc: "PAKET DITERIMA OLEH [FILLA SAPUTRO (YBS)]",
+      desc: "PAKET DITERIMA OLEH [JIMMY (YBS)]",
       location: "JAKARTA SELATAN"
     },
     {
