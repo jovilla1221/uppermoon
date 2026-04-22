@@ -37,17 +37,30 @@ export async function POST(req: NextRequest) {
       courier
     );
 
-    // Binderbyte returns { status, message, data: { costs: [...] } }
-    if (result.status === 200 && result.data && result.data.costs) {
+    // Binderbyte actual response:
+    // { code: "200", data: { results: [{ code, name, costs: [{ service, type, price, estimated }] }] } }
+    if (result.code === "200" && result.data?.results?.length > 0) {
+      const courierResult = result.data.results[0];
+      const costs = (courierResult.costs || []).map((c: any) => ({
+        service: c.service || c.type,
+        description: `${courierResult.name} - ${c.service}`,
+        cost: Number(c.price) || 0,
+        etd: c.estimated || "-",
+      }));
+
+      // Filter out cargo/bulk services with unreasonable prices 
+      const filteredCosts = costs.filter((c: any) => c.cost > 0 && c.cost < 500000);
+
       return NextResponse.json({ 
         success: true, 
-        costs: result.data.costs 
+        costs: filteredCosts 
       });
     }
 
+    console.error("[SHIPPING] Unexpected response:", JSON.stringify(result));
     return NextResponse.json({ 
       success: false, 
-      error: result.message || "Failed to calculate cost" 
+      error: result.message || "No shipping services available for this route." 
     }, { status: 400 });
 
   } catch (error: any) {
