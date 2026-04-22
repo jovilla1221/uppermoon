@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Serif } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
@@ -11,7 +11,7 @@ const inter = Inter({
   subsets: ["latin"],
 });
 
-const notoSerif = Noto_Serif({
+const playfairDisplay = Playfair_Display({
   variable: "--font-headline",
   subsets: ["latin"],
   style: ["normal", "italic"],
@@ -92,7 +92,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${notoSerif.variable} antialiased bg-surface text-on-surface`}
+        className={`${inter.variable} ${playfairDisplay.variable} antialiased bg-surface text-on-surface`}
         suppressHydrationWarning
       >
         <AuthProvider>
