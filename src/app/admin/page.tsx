@@ -972,7 +972,7 @@ export default function AdminPage() {
 
             <div className="mt-8">
               <button 
-                onClick={handeSaveSettings}
+                onClick={handleSaveSettings}
                 disabled={uploading}
                 className="bg-white text-black px-8 py-4 text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-200 transition-colors disabled:opacity-50"
               >
