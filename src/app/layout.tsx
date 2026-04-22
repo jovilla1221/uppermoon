@@ -20,10 +20,50 @@ const notoSerif = Noto_Serif({
 import { AuthProvider } from "@/context/AuthContext";
 import { siteSettingsQuery, allProductsQuery } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "UPPERMOON | Architectural Silence",
-  description: "Minimalist urban aesthetic streetwear.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: `${SITE_NAME} | Architectural Silence`,
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  keywords: [
+    "streetwear", "minimalist fashion", "urban clothing", "Indonesian streetwear",
+    "premium clothing", "UPPERMOON", "architectural fashion", "Blitar",
+    "kaos streetwear", "jaket hoodie", "fashion brand Indonesia"
+  ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: `${SITE_NAME} | Architectural Silence`,
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: `${SITE_NAME} | Architectural Silence`,
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: SITE_URL,
+  },
 };
 
 export default async function RootLayout({
@@ -42,7 +82,7 @@ export default async function RootLayout({
   } catch (e) { }
 
   return (
-    <html lang="en" className="light" suppressHydrationWarning>
+    <html lang="id" className="light" suppressHydrationWarning>
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
         <Script

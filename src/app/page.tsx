@@ -7,6 +7,7 @@ import { allProductsQuery } from "@/sanity/lib/queries";
 import BestSellersClient from "@/components/home/BestSellersClient";
 
 import { siteSettingsQuery } from "@/sanity/lib/queries";
+import { OrganizationJsonLd } from "@/components/seo/JsonLd";
 
 export const revalidate = 0;
 
@@ -28,7 +29,9 @@ export default async function Home() {
   const bestSellers = products.slice(0, 4);
 
   return (
-    <main>
+    <>
+      <OrganizationJsonLd />
+      <main>
       <HeroSlider 
         hero1Url={settings?.hero1 || ""} 
         hero2Url={settings?.hero2 || ""} 
@@ -91,5 +94,6 @@ export default async function Home() {
         </div>
       </section>
     </main>
+    </>
   );
 }
