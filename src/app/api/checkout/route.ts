@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       callbacks: {
         finish: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/orders/${orderId}`,
       },
-      enabled_payments: ["qris"]
+      enabled_payments: ["other_qris", "gopay"]
     };
 
     const transaction = await snap.createTransaction(parameter);
