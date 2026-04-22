@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     
     // Normalize IDs: BinderByte requires 'dist_' prefix for Kecamatan/District level
     const finalDestination = destination.startsWith('dist_') ? destination : `dist_${destination}`;
-    const origin = process.env.SHIPPING_ORIGIN_ID || "dist_31.71.01"; // Jakarta Pusat (Gambir)
+    const origin = process.env.SHIPPING_ORIGIN_ID || "dist_35.72.03"; // Kota Blitar (Sananwetan)
 
     // Binderbyte expects weight in KG, frontend provides weight in Grams
     const weightInKg = Math.max(1, Math.ceil((weight || 1000) / 1000));
