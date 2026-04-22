@@ -93,7 +93,11 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
   };
 
   const handleTrackPackage = async () => {
-    if (!order.waybill) return;
+    if (!order.waybill) {
+      setTrackingError("Nomor resi belum tersedia untuk pesanan ini.");
+      setIsTrackingOpen(true);
+      return;
+    }
     
     setIsTrackingOpen(true);
     setIsTrackingLoading(true);
@@ -105,21 +109,30 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           awb: order.waybill,
-          courier: order.courierName?.toLowerCase() || "sicepat"
+          courier: order.courierName || "sicepat"
         })
       });
       const result = await res.json();
       if (result.success) {
         setTrackingData(result.data);
       } else {
-        setTrackingError(result.error || "Failed to fetch tracking information.");
+        // Provide more detailed feedback based on common errors
+        const errorMsg = result.error || "";
+        if (errorMsg.toLowerCase().includes("not found") || errorMsg.toLowerCase().includes("not match")) {
+          setTrackingError(`Resi "${order.waybill}" tidak ditemukan di sistem ${order.courierName || 'kurir'}. Harap tunggu 1-4 jam setelah paket di-drop ke kurir.`);
+        } else if (errorMsg.toLowerCase().includes("limit") || errorMsg.toLowerCase().includes("quota")) {
+          setTrackingError("Layanan pelacakan sedang sibuk (Limit API). Silakan coba lagi beberapa saat lagi.");
+        } else {
+          setTrackingError(result.error || "Gagal mengambil data pelacakan.");
+        }
       }
     } catch (err) {
-      setTrackingError("Check your internet connection and try again.");
+      setTrackingError("Gangguan koneksi. Silakan coba lagi.");
     } finally {
       setIsTrackingLoading(false);
     }
   };
+
 
   const getStatusColor = (status: string) => {
     switch (status) {

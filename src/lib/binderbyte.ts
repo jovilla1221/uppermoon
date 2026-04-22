@@ -139,9 +139,10 @@ export async function getShippingCost(
   weight: number,
   courier: string
 ): Promise<any> {
+  const normalizedCourier = normalizeCourierCode(courier);
   const params = new URLSearchParams({
     api_key: BINDERBYTE_API_KEY,
-    courier,
+    courier: normalizedCourier,
     origin,
     destination,
     weight: String(weight),
@@ -159,20 +160,113 @@ export async function getShippingCost(
 }
 
 /**
+ * Normalizes a courier name to the slug expected by Binderbyte
+ */
+export function normalizeCourierCode(name: string): string {
+  if (!name) return "sicepat";
+  const n = name.toLowerCase().trim();
+  
+  if (n.includes("sicepat") || n.includes("si cepat")) return "sicepat";
+  if (n.includes("jne")) return "jne";
+  if (n.includes("j&t") || n.includes("jnt")) return "jnt";
+  if (n.includes("pos")) return "pos";
+  if (n.includes("tiki")) return "tiki";
+  if (n.includes("wahana")) return "wahana";
+  if (n.includes("anteraja")) return "anteraja";
+  if (n.includes("ninja")) return "ninja";
+  if (n.includes("lion")) return "lion";
+  if (n.includes("sap")) return "sap";
+  if (n.includes("ncs")) return "ncs";
+  if (n.includes("sentral")) return "sentral";
+  if (n.includes("rex")) return "rex";
+  if (n.includes("rpx")) return "rpx";
+  if (n.includes("ide")) return "ide";
+
+  return n; // fallback to lowercase string
+}
+
+export const UPPERMOON_DEMO_AWB = "UPPERMOON-DEMO";
+
+const MOCK_TRACKING_DATA: TrackingResult = {
+  summary: {
+    awb: UPPERMOON_DEMO_AWB,
+    courier: "SiCepat",
+    service: "SIUNT",
+    status: "DELIVERED",
+    date: new Date().toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }),
+    desc: "Paket telah diterima oleh [Filla Saputro]",
+    amount: "Rp 15.000",
+    weight: "1 Kg",
+  },
+  detail: {
+    origin: "BLITAR",
+    destination: "JAKARTA",
+    shipper: "UPPERMOON OFFICIAL",
+    receiver: "CUSTOMER",
+  },
+  history: [
+    {
+      date: new Date().toISOString().split('T')[0] + " 14:20",
+      desc: "PAKET DITERIMA OLEH [FILLA SAPUTRO (YBS)]",
+      location: "JAKARTA SELATAN"
+    },
+    {
+      date: new Date().toISOString().split('T')[0] + " 09:15",
+      desc: "PAKET DIBAWA OLEH SIGESIT (COURIER ON DELIVERY)",
+      location: "JAKARTA SELATAN"
+    },
+    {
+      date: new Date(Date.now() - 86400000).toISOString().split('T')[0] + " 21:30",
+      desc: "PAKET TELAH SAMPAI DI HUB JAKARTA SELATAN",
+      location: "JAKARTA SELATAN"
+    },
+    {
+      date: new Date(Date.now() - 86400000).toISOString().split('T')[0] + " 08:00",
+      desc: "PAKET KELUAR DARI HUB SURABAYA",
+      location: "SURABAYA"
+    },
+    {
+      date: new Date(Date.now() - 172800000).toISOString().split('T')[0] + " 16:45",
+      desc: "PAKET TELAH DI-PICKUP OLEH KURIR",
+      location: "BLITAR"
+    }
+  ]
+};
+
+/**
  * Track a package by AWB number
  */
 export async function trackPackage(
   awb: string,
   courier: string
 ): Promise<TrackingResult> {
+  // SEPARATION LOGIC: Check for Demo Code first
+  if (awb === UPPERMOON_DEMO_AWB) {
+    console.log("[LOGISTICS] Demo Tracking Mode Activated for", awb);
+    return MOCK_TRACKING_DATA;
+  }
+
+  const normalizedCourier = normalizeCourierCode(courier);
   const res = await fetch(
-    `${BASE_URL}/v1/track?api_key=${BINDERBYTE_API_KEY}&courier=${courier}&awb=${awb}`
+    `${BASE_URL}/v1/track?api_key=${BINDERBYTE_API_KEY}&courier=${normalizedCourier}&awb=${awb}`
   );
+  
+  // Handle empty or error responses from fetch
+  if (!res.ok) {
+    throw new Error(`Tracking service returned error status: ${res.status}`);
+  }
+
   const data = await res.json();
 
   if (data.status !== 200) {
+    // If Binderbyte specifically says not found, provide a better error
+    if (data.status === 400 && data.message?.toLowerCase().includes("not match")) {
+      throw new Error(`Package not found for courier ${normalizedCourier.toUpperCase()}. Please check your receipt number.`);
+    }
     throw new Error(data.message || "Failed to track package");
   }
 
   return data.data;
 }
+
+

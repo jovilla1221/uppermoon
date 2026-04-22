@@ -1060,8 +1060,8 @@ export default function AdminPage() {
                                 <button 
                                   onClick={(e) => {
                                     const input = e.currentTarget.previousSibling as HTMLInputElement;
-                                    input.value = '004415309322';
-                                    handleUpdateWaybill(order._id, '004415309322');
+                                    input.value = 'UPPERMOON-DEMO';
+                                    handleUpdateWaybill(order._id, 'UPPERMOON-DEMO');
                                   }}
                                   className="bg-zinc-800 hover:bg-zinc-700 text-[9px] px-2 py-1 border border-zinc-700 transition-colors uppercase font-bold"
                                   title="Gunakan Resi Demo untuk Tes Lacak"
