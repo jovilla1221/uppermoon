@@ -155,7 +155,7 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
 
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
-          <h1 className="font-headline italic text-4xl md:text-5xl tracking-tight leading-none mb-2">Order Summary</h1>
+          <h1 className="font-headline font-bold text-4xl md:text-5xl tracking-tight leading-none mb-2">Order Summary</h1>
           <p className="font-label text-[0.625rem] tracking-[0.3em] text-outline uppercase">PLACED ON: {new Date(order.createdAt).toLocaleDateString()} at {new Date(order.createdAt).toLocaleTimeString()}</p>
         </div>
         <div className={`px-4 py-2 border font-label text-[0.625rem] font-bold tracking-[0.2em] uppercase rounded-full ${getStatusColor(order.paymentStatus)}`}>
@@ -291,7 +291,7 @@ export default function OrderDetailClient({ initialOrder }: { initialOrder: any 
           {/* Header */}
           <div className="p-8 border-b border-surface-container-highest flex items-center justify-between">
             <div>
-              <h2 className="font-headline italic text-2xl tracking-tight">Track Package</h2>
+              <h2 className="font-headline font-bold text-2xl tracking-tight">Track Package</h2>
               <p className="font-label text-[0.5625rem] tracking-[0.3em] text-outline uppercase mt-1">NO. RESI: {order.waybill}</p>
             </div>
             <button 

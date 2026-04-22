@@ -28,7 +28,7 @@ export default async function OrderPage({ params }: { params: { orderId: string 
   if (!order) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <h1 className="font-headline italic text-2xl uppercase">Order NOT FOUND.</h1>
+        <h1 className="font-headline font-bold text-2xl uppercase">Order NOT FOUND.</h1>
       </div>
     );
   }

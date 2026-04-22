@@ -54,7 +54,7 @@ export default async function Home() {
 
       {/* View All Section */}
       <Reveal className="py-16 bg-surface flex flex-col items-center justify-center border-t border-surface-container">
-        <span className="font-headline italic text-4xl md:text-5xl text-on-surface-variant mb-6">View all</span>
+        <span className="font-headline font-bold text-4xl md:text-5xl text-on-surface-variant mb-6">View all</span>
         <Link href="/products" className="text-[0.6875rem] font-bold tracking-[0.3em] uppercase border-b-[1px] border-on-surface pb-[2px] transition-opacity hover:opacity-70">
           VIEW ALL PRODUCTS
         </Link>
@@ -64,7 +64,7 @@ export default async function Home() {
       <section className="py-24 px-6 md:px-12 bg-surface">
         <div className="max-w-7xl mx-auto">
           <Reveal className="text-center mb-16">
-            <h2 className="font-headline italic text-5xl md:text-7xl mb-4">Community</h2>
+            <h2 className="font-headline font-bold text-5xl md:text-7xl mb-4">Community</h2>
             <p className="text-[0.6875rem] tracking-[0.2em] uppercase text-outline">Tag @uppermoon to get featured</p>
           </Reveal>
 

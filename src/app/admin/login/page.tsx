@@ -63,7 +63,7 @@ function AdminLoginForm() {
         </div>
       </div>
       
-      <h1 className="font-headline italic text-4xl mb-2 text-center text-[#000000]">Admin Login</h1>
+      <h1 className="font-headline font-bold text-4xl mb-2 text-center text-[#000000]">Admin Login</h1>
       <p className="font-label text-xs tracking-[0.2em] uppercase text-outline text-center mb-10">Access the Dashboard</p>
 
       {error && (

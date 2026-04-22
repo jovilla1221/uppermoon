@@ -48,7 +48,7 @@ export default function SearchOverlay({ isOpen, onClose, products = [] }: Search
             placeholder="Search products..." 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full bg-transparent text-3xl md:text-5xl font-headline italic outline-none placeholder:text-outline"
+            className="w-full bg-transparent text-3xl md:text-5xl font-headline font-bold outline-none placeholder:text-outline"
           />
         </div>
 
@@ -68,7 +68,7 @@ export default function SearchOverlay({ isOpen, onClose, products = [] }: Search
                 onClick={onClose}
                 className="flex items-center justify-between py-4 border-b border-surface-container hover:px-4 hover:bg-surface-container-low transition-all duration-300 group"
               >
-                <span className="font-headline text-xl group-hover:italic">{product.name}</span>
+                <span className="font-headline font-bold text-xl">{product.name}</span>
                 <span className="font-label text-sm text-secondary">{formatPrice(product.price)}</span>
               </Link>
             ))}

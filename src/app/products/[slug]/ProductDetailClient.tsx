@@ -209,7 +209,7 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
       {relatedProducts.length > 0 && (
         <section className="mt-32">
           <div className="flex items-baseline justify-between mb-12">
-            <h2 className="text-3xl font-headline italic">YOU MAY ALSO LIKE</h2>
+            <h2 className="text-3xl font-headline font-bold">YOU MAY ALSO LIKE</h2>
             <div className="h-[1px] flex-grow mx-8 bg-surface-container"></div>
             <Link href="/products" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary hover:text-primary transition-colors">VIEW ALL</Link>
           </div>

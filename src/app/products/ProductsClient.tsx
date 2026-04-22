@@ -43,7 +43,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
       {/* Sidebar Navigation */}
       <aside className="hidden md:flex flex-col p-8 w-80 bg-surface border-r border-surface-container sticky top-[56px] h-[calc(100vh-56px)] overflow-y-auto">
         <div className="mb-12">
-          <h2 className="text-xl font-black text-on-surface font-headline italic mb-1 uppercase">SHOP</h2>
+          <h2 className="text-xl font-black text-on-surface font-headline font-bold mb-1 uppercase">SHOP</h2>
           <p className="text-[10px] tracking-widest text-outline uppercase">CURRENCY: {currency}</p>
         </div>
 
@@ -122,7 +122,7 @@ export default function ProductsClient({ products }: { products: Product[] }) {
             <span className="text-primary font-bold">{selectedCategory}</span>
           </nav>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <h1 className="text-4xl md:text-5xl font-headline tracking-tighter leading-none italic capitalize">
+            <h1 className="text-4xl md:text-5xl font-headline font-bold tracking-tighter leading-none capitalize">
               {selectedCategory === "ALL" ? "View All" : selectedCategory.toLowerCase()}<span className="not-italic opacity-20">.</span>
             </h1>
             <div className="flex items-center gap-4 text-[10px] tracking-widest font-bold">

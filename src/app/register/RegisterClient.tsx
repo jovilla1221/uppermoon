@@ -156,7 +156,7 @@ export default function RegisterClient() {
   return (
     <main className="min-h-[80vh] flex items-center justify-center px-6 py-24 animate-[fade-up-slide_0.8s_forwards]">
       <div className="w-full max-w-md bg-surface-container-lowest p-8 md:p-12 shadow-light border border-surface-container">
-        <h1 className="font-headline italic text-4xl mb-2 text-center">
+        <h1 className="font-headline font-bold text-4xl mb-2 text-center">
           {step === "register" ? "Create Account" : step === "expired" ? "Code Expired" : "Verify Email"}
         </h1>
         <p className="font-label text-xs tracking-[0.2em] uppercase text-outline text-center mb-10">

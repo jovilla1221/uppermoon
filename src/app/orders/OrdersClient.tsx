@@ -18,7 +18,7 @@ export default function OrdersClient({ orders }: { orders: any[] }) {
   if (!orders || orders.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-24 text-center">
-        <h1 className="font-headline italic text-4xl mb-6 uppercase tracking-tight">NO ORDERS YET</h1>
+        <h1 className="font-headline font-bold text-4xl mb-6 uppercase tracking-tight">NO ORDERS YET</h1>
         <p className="font-label text-[0.625rem] tracking-[0.2em] text-outline uppercase mb-10">Start your journey with our minimalist architectural pieces.</p>
         <Link 
           href="/products"
@@ -34,7 +34,7 @@ export default function OrdersClient({ orders }: { orders: any[] }) {
     <div className="max-w-7xl mx-auto px-6 py-12 md:py-24 animate-[fade-up-slide_0.5s_forwards]">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16">
         <div>
-          <h1 className="font-headline italic text-5xl md:text-6xl tracking-tighter leading-none mb-3">Order History</h1>
+          <h1 className="font-headline font-bold text-5xl md:text-6xl tracking-tighter leading-none mb-3">Order History</h1>
           <p className="font-label text-[0.625rem] tracking-[0.3em] text-outline uppercase">A ARCHIVE OF YOUR ARCHITECTURAL SILENCE SELECTIONS</p>
         </div>
       </div>

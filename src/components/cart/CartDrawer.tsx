@@ -35,7 +35,7 @@ export default function CartDrawer() {
         
         <div className="flex items-center justify-between px-8 pt-10 pb-6">
           <div className="flex flex-col">
-            <h2 className="font-headline italic text-2xl text-on-surface">YOUR BAG</h2>
+            <h2 className="font-headline font-bold text-2xl text-on-surface">YOUR BAG</h2>
             <span className="font-label text-[0.6875rem] uppercase tracking-[0.2em] text-outline mt-1">
               ESTIMATED TOTAL: {currency} {formatPrice(cartTotal)}
             </span>
@@ -64,7 +64,7 @@ export default function CartDrawer() {
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-start">
-                      <h3 className="font-headline text-lg text-on-surface leading-tight">{item.name} ({item.size})</h3>
+                      <h3 className="font-headline font-bold text-lg text-on-surface leading-tight">{item.name} ({item.size})</h3>
                       <button onClick={() => removeFromCart(item.id)} className="text-outline hover:text-on-surface transition-colors">
                         <span className="material-symbols-outlined text-sm">delete</span>
                       </button>

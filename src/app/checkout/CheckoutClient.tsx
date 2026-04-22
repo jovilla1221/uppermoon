@@ -260,7 +260,7 @@ export default function CheckoutClient() {
   if (cartItems.length === 0) {
     return (
       <div className="max-w-7xl mx-auto px-6 py-24 text-center">
-        <h1 className="font-headline italic text-4xl mb-6 uppercase">YOUR BAG IS EMPTY</h1>
+        <h1 className="font-headline font-bold text-4xl mb-6 uppercase">YOUR BAG IS EMPTY</h1>
         <button 
           onClick={() => router.push("/products")}
           className="border-b border-on-surface pb-1 font-label text-[0.6875rem] tracking-[0.2em] font-bold uppercase transition-opacity hover:opacity-70"
@@ -274,7 +274,7 @@ export default function CheckoutClient() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 md:py-24">
       <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-12 gap-4">
-        <h1 className="font-headline italic text-4xl md:text-5xl uppercase tracking-tight">Checkout</h1>
+        <h1 className="font-headline font-bold text-4xl md:text-5xl uppercase tracking-tight">Checkout</h1>
         <div className="font-label text-[0.625rem] text-secondary tracking-[0.2em] uppercase">
           Review your order and select shipping
         </div>
