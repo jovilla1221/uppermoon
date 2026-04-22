@@ -26,7 +26,7 @@ export async function sendEmailOtpViaResend({
   // By default, Resend testing mode ONLY works if sending from 'onboarding@resend.dev' 
   // TO the exact email address you used to register the Resend account.
   // We use this as a safe fallback until you add a verified domain (like noreply@yourdomain.com).
-  const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+  const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'noreply@uppermoon.store';
 
   const htmlContent = template === 'admin-verify'
     ? `
