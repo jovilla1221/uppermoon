@@ -465,7 +465,7 @@ export default function AdminPage() {
     setUploading(false);
   };
 
-  const handeSaveSettings = async () => {
+  const handleSaveSettings = async () => {
     setUploading(true);
     setMessage("Menyimpan pengaturan...");
     const res = await fetch("/api/admin/settings", {
