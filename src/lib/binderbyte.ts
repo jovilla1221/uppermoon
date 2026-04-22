@@ -8,7 +8,7 @@ const BASE_URL = "https://api.binderbyte.com";
 
 export const COURIERS = [
   { id: "jne", name: "JNE" },
-  { id: "jnt", name: "J&T" },
+  { id: "sicepat", name: "SiCepat" },
 ];
 
 // --- Types ---
