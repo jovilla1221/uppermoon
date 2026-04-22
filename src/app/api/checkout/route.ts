@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { cartItems, shippingAddress, customerPhone, shippingCost, courierName, courierService } = body;
+    const { cartItems, customerName, shippingAddress, customerPhone, shippingCost, courierName, courierService } = body;
 
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         _type: "reference",
         _ref: user.userId,
       },
-      customerName: user.username,
+      customerName: customerName || user.username,
       customerEmail: user.email,
       customerPhone,
       shippingAddress: {
@@ -95,11 +95,11 @@ export async function POST(req: NextRequest) {
         }
       ],
       customer_details: {
-        first_name: user.username,
+        first_name: customerName || user.username,
         email: user.email,
         phone: customerPhone,
         shipping_address: {
-          first_name: user.username,
+          first_name: customerName || user.username,
           phone: customerPhone,
           address: shippingAddress.street,
           city: shippingAddress.city,

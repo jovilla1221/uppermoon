@@ -47,6 +47,7 @@ export default function CheckoutClient() {
     districtId: "",
   });
 
+  const [customerName, setCustomerName] = useState(user?.username || "");
   const [phone, setPhone] = useState("");
   const [selectedCourier, setSelectedCourier] = useState("");
   const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([]);
@@ -199,6 +200,7 @@ export default function CheckoutClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           cartItems,
+          customerName,
           shippingAddress: shippingInfo,
           customerPhone: phone,
           shippingCost: selectedService.cost,
@@ -287,6 +289,18 @@ export default function CheckoutClient() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Basic Info */}
+                <div className="space-y-3 md:col-span-2">
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Full Name</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={customerName} 
+                    onChange={(e) => setCustomerName(e.target.value)}
+                    placeholder="Recipient Name"
+                    className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none" 
+                  />
+                </div>
+
                 <div className="space-y-3">
                   <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Phone Number</label>
                   <input 
