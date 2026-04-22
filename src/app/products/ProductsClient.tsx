@@ -64,6 +64,10 @@ export default function ProductsClient({ products }: { products: Product[] }) {
             <span className="material-symbols-outlined">straighten</span>
             BOTTOMS
           </button>
+          <button onClick={() => setSelectedCategory("FOOTWEAR")} className={`flex items-center gap-3 font-label tracking-[0.1em] uppercase ${selectedCategory === "FOOTWEAR" ? activeCategoryClasses : inactiveCategoryClasses}`}>
+            <span className="material-symbols-outlined">steps</span>
+            FOOTWEAR
+          </button>
           <button onClick={() => setSelectedCategory("ACCESSORIES")} className={`flex items-center gap-3 font-label tracking-[0.1em] uppercase ${selectedCategory === "ACCESSORIES" ? activeCategoryClasses : inactiveCategoryClasses}`}>
             <span className="material-symbols-outlined">watch</span>
             ACCESSORIES
