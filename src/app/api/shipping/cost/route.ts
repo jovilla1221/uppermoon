@@ -21,20 +21,15 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { destination, weight, courier } = body;
     
-    // Default origin (Store Location). 
-    // TODO: Move to .env or Sanity settings
-    const origin = process.env.SHIPPING_ORIGIN_ID || "3171011001"; // Default: Jakarta Pusat
+    // Normalize IDs: some APIs dislike dots or extra characters
+    const cleanDestination = destination.replace(/[^0-9]/g, '');
+    const origin = process.env.SHIPPING_ORIGIN_ID || "3171010"; // Jakarta Pusat (Gambir)
 
-    if (!destination || !courier) {
-      return NextResponse.json(
-        { success: false, error: "destination and courier are required" },
-        { status: 400 }
-      );
-    }
+    console.log(`[SHIPPING] Calculating cost: origin=${origin}, destination=${cleanDestination}, weight=${weight}, courier=${courier}`);
 
     const result = await getShippingCost(
       origin,
-      destination,
+      cleanDestination,
       weight || 1000,
       courier
     );

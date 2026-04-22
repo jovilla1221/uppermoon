@@ -8,15 +8,7 @@ const BASE_URL = "https://api.binderbyte.com";
 
 export const COURIERS = [
   { id: "jne", name: "JNE" },
-  { id: "pos", name: "POS Indonesia" },
-  { id: "tiki", name: "TIKI" },
-  { id: "sicepat", name: "SiCepat" },
   { id: "jnt", name: "J&T" },
-  { id: "anteraja", name: "Anteraja" },
-  { id: "wahana", name: "Wahana" },
-  { id: "ninja", name: "Ninja Xpress" },
-  { id: "lion", name: "Lion Parcel" },
-  { id: "sap", name: "SAP Express" },
 ];
 
 // --- Types ---
