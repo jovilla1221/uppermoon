@@ -21,16 +21,19 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { destination, weight, courier } = body;
     
-    // Normalize IDs: some APIs dislike dots or extra characters
-    const cleanDestination = destination.replace(/[^0-9]/g, '');
-    const origin = process.env.SHIPPING_ORIGIN_ID || "3171010"; // Jakarta Pusat (Gambir)
+    // Normalize IDs: BinderByte requires 'dist_' prefix for Kecamatan/District level
+    const finalDestination = destination.startsWith('dist_') ? destination : `dist_${destination}`;
+    const origin = process.env.SHIPPING_ORIGIN_ID || "dist_31.71.01"; // Jakarta Pusat (Gambir)
 
-    console.log(`[SHIPPING] Calculating cost: origin=${origin}, destination=${cleanDestination}, weight=${weight}, courier=${courier}`);
+    // Binderbyte expects weight in KG, frontend provides weight in Grams
+    const weightInKg = Math.max(1, Math.ceil((weight || 1000) / 1000));
+
+    console.log(`[SHIPPING] Calculating cost: origin=${origin}, destination=${finalDestination}, weightKg=${weightInKg}, courier=${courier}`);
 
     const result = await getShippingCost(
       origin,
-      cleanDestination,
-      weight || 1000,
+      finalDestination,
+      weightInKg,
       courier
     );
 
