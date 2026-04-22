@@ -26,10 +26,10 @@ export default function TrackingClient() {
       });
 
       const data = await res.json();
-      if (data.success && data.data.status === 200) {
-        setResult(data.data.data);
+      if (data.success) {
+        setResult(data.data);
       } else {
-        setError(data.error || data.data?.message || "Nomor resi tidak ditemukan atau belum terupdate.");
+        setError(data.error || "Nomor resi tidak ditemukan atau belum terupdate.");
       }
     } catch (err) {
       setError("Terjadi kesalahan saat melacak paket.");
