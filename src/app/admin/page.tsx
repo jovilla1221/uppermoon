@@ -1057,6 +1057,17 @@ export default function AdminPage() {
                                   }}
                                   className="bg-black border border-neutral-800 focus:border-white px-2 py-1 text-[10px] w-full transition-colors uppercase outline-none"
                                 />
+                                <button 
+                                  onClick={(e) => {
+                                    const input = e.currentTarget.previousSibling as HTMLInputElement;
+                                    input.value = '004415309322';
+                                    handleUpdateWaybill(order._id, '004415309322');
+                                  }}
+                                  className="bg-zinc-800 hover:bg-zinc-700 text-[9px] px-2 py-1 border border-zinc-700 transition-colors uppercase font-bold"
+                                  title="Gunakan Resi Demo untuk Tes Lacak"
+                                >
+                                  Demo
+                                </button>
                               </div>
                             </div>
                           </div>
