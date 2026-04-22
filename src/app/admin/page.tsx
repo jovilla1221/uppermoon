@@ -22,7 +22,8 @@ export default function AdminPage() {
 
   const [products, setProducts] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"products" | "settings" | "orders">("products");
+  const [users, setUsers] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"products" | "settings" | "orders" | "users">("products");
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -99,6 +100,18 @@ export default function AdminPage() {
     setLoading(false);
   };
 
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/admin/users");
+      const data = await res.json();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
+  };
+
   const fetchSettings = async () => {
     const res = await fetch("/api/admin/settings");
     const data = await res.json();
@@ -119,6 +132,7 @@ export default function AdminPage() {
     if (isLoggedIn) {
       if (activeTab === "settings") fetchSettings();
       if (activeTab === "orders") fetchOrders();
+      if (activeTab === "users") fetchUsers();
     }
   }, [isLoggedIn, activeTab]);
 
@@ -380,6 +394,39 @@ export default function AdminPage() {
     }
   };
 
+  const handleUpdateUserRole = async (id: string, newRole: string) => {
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, role: newRole }),
+      });
+      if (res.ok) {
+        setUsers(prev => prev.map(u => u._id === id ? { ...u, role: newRole } : u));
+        setMessage("✅ Role user diperbarui");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    if (!confirm("Hapus akun user ini secara permanen?")) return;
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setUsers(prev => prev.filter(u => u._id !== id));
+        setMessage("🗑️ Akun user berhasil dihapus");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const uploadSingleSettingImage = async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
@@ -515,6 +562,12 @@ export default function AdminPage() {
             >
               PENGATURAN
             </button>
+            <button 
+              onClick={() => setActiveTab("users")}
+              className={`text-xs tracking-widest uppercase transition-colors px-3 py-2 ${activeTab === "users" ? "text-white bg-neutral-900" : "text-neutral-500 hover:text-white"}`}
+            >
+              USERS
+            </button>
           </div>
         </div>
         <div className="flex items-center gap-4">
@@ -532,6 +585,7 @@ export default function AdminPage() {
         <button onClick={() => setActiveTab("products")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "products" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>PRODUK</button>
         <button onClick={() => setActiveTab("orders")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "orders" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>ORDER</button>
         <button onClick={() => setActiveTab("settings")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "settings" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>PENGATURAN</button>
+        <button onClick={() => setActiveTab("users")} className={`flex-1 py-3 text-xs tracking-widest uppercase text-center ${activeTab === "users" ? "text-white border-b-2 border-white" : "text-neutral-500"}`}>USERS</button>
       </div>
 
       <main className="max-w-5xl mx-auto px-6 py-10">
@@ -1050,6 +1104,96 @@ export default function AdminPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Users Tab */}
+        {activeTab === "users" && (
+          <div>
+            <div className="mb-8 flex justify-between items-end">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">Manajemen User</h2>
+                <p className="text-xs text-neutral-500 mt-1">Total {users.length} pengguna terdaftar</p>
+              </div>
+              <button 
+                onClick={fetchUsers}
+                className="text-[10px] tracking-widest uppercase text-neutral-400 hover:text-white transition-colors border border-neutral-800 px-4 py-2"
+              >
+                REFRESH
+              </button>
+            </div>
+
+            {loading ? (
+              <div className="text-center py-20 text-neutral-500">Memuat data user...</div>
+            ) : users.length === 0 ? (
+              <div className="text-center py-20 border border-dashed border-neutral-800 text-neutral-500">
+                Belum ada user yang terdaftar.
+              </div>
+            ) : (
+              <div className="bg-neutral-900 border border-neutral-800 overflow-x-auto">
+                <table className="w-full text-left text-xs uppercase tracking-wider">
+                  <thead>
+                    <tr className="border-b border-neutral-800 bg-neutral-950">
+                      <th className="px-6 py-4 font-bold text-neutral-500">Nama & Email</th>
+                      <th className="px-6 py-4 font-bold text-neutral-500 text-center">Status</th>
+                      <th className="px-6 py-4 font-bold text-neutral-500 text-center">Role</th>
+                      <th className="px-6 py-4 font-bold text-neutral-500 text-center">Terakhir Login</th>
+                      <th className="px-6 py-4 font-bold text-neutral-500 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user._id} className="border-b border-neutral-800 hover:bg-neutral-800/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="font-bold text-white">{user.fullName}</div>
+                          <div className="text-[10px] text-neutral-500 normal-case mt-0.5">{user.email}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${
+                            user.isVerified ? 'bg-green-500/10 text-green-500 border-green-500/20' : 'bg-red-500/10 text-red-500 border-red-500/20'
+                          }`}>
+                            {user.isVerified ? 'VERIFIED' : 'UNVERIFIED'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <select 
+                            value={user.role || 'user'}
+                            onChange={(e) => handleUpdateUserRole(user._id, e.target.value)}
+                            className="bg-black border border-neutral-700 text-[10px] px-2 py-1 outline-none focus:border-white transition-colors"
+                          >
+                            <option value="user">USER</option>
+                            <option value="member">MEMBER</option>
+                            <option value="admin">ADMIN</option>
+                          </select>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <div className="text-neutral-300">
+                            {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString('id-ID', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            }) : 'Belum pernah'}
+                          </div>
+                          <div className="text-[10px] text-neutral-500 mt-1">
+                            REGISTERED: {new Date(user._createdAt).toLocaleDateString()}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <button 
+                            onClick={() => handleDeleteUser(user._id)}
+                            className="text-red-500 hover:text-red-400 transition-colors"
+                          >
+                            HAPUS
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

@@ -41,5 +41,10 @@ export const siteUserType = defineType({
         ],
       },
     }),
+    defineField({
+      name: "lastLoginAt",
+      title: "Last Login At",
+      type: "datetime",
+    }),
   ],
 });

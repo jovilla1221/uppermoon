@@ -63,6 +63,17 @@ export async function POST(request: Request) {
       email: user.email,
       role: resolvedRole,
     });
+    
+    // Update last login timestamp in Sanity
+    try {
+      await writeClient
+        .patch(user._id)
+        .set({ lastLoginAt: new Date().toISOString() })
+        .commit();
+    } catch (trackErr) {
+      console.error("[LOGIN_API] Failed to update lastLoginAt:", trackErr);
+      // We don't block login if tracking fails
+    }
 
     const response = NextResponse.json({ 
       success: true, 
