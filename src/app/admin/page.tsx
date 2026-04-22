@@ -332,6 +332,19 @@ export default function AdminPage() {
     }
   };
 
+  const handleUpdateWaybill = async (id: string, waybill: string) => {
+    const res = await fetch("/api/admin/orders", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, waybill }),
+    });
+    const data = await res.json();
+    if (data.success) {
+      setMessage("✅ Resi pengiriman berhasil diperbarui");
+      fetchOrders();
+    }
+  };
+
   const handleDeleteOrder = async (id: string, orderId: string) => {
     if (!confirm(`Hapus pesanan ${orderId}? Tindakan ini tidak dapat dibatalkan.`)) return;
     const res = await fetch("/api/admin/orders", {
@@ -947,6 +960,25 @@ export default function AdminPage() {
                               <p>{order.shippingAddress.city}, {order.shippingAddress.province} {order.shippingAddress.postalCode}</p>
                             </>
                           )}
+                          <div className="mt-3 pt-3 border-t border-neutral-800">
+                            <p><span className="text-neutral-500">KURIR:</span> {order.courierName || '-'} ({order.courierService || '-'})</p>
+                            <div className="mt-2">
+                              <label className="text-[10px] text-neutral-500 uppercase block mb-1">No. Resi (Waybill)</label>
+                              <div className="flex gap-2">
+                                <input 
+                                  type="text" 
+                                  placeholder="Input No. Resi..."
+                                  defaultValue={order.waybill || ''}
+                                  onBlur={(e) => {
+                                    if (e.target.value !== (order.waybill || '')) {
+                                      handleUpdateWaybill(order._id, e.target.value);
+                                    }
+                                  }}
+                                  className="bg-black border border-neutral-800 focus:border-white px-2 py-1 text-[10px] w-full transition-colors uppercase outline-none"
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                       <div>

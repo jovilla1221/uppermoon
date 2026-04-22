@@ -61,7 +61,32 @@ export async function POST(req: NextRequest) {
 
     console.log(`[MIDTRANS_NOTIFICATION] Updating order ${order_id} to status: ${paymentStatus}`);
 
-    // 4. Update Order in Sanity
+    // 4. Update Order in Sanity & Decrement Stock if newly paid
+    if (paymentStatus === "paid" && order.paymentStatus !== "paid") {
+      console.log(`[MIDTRANS_NOTIFICATION] Order ${order_id} is newly PAID. Decrementing stock...`);
+      
+      // Perform as part of a transaction/batch if possible, but for now individual patches
+      for (const item of order.items || []) {
+        try {
+          // Find product to get ID and ensure it exists
+          const productQuery = `*[_type == "product" && slug.current == $slug][0]._id`;
+          const productId = await writeClient.fetch(productQuery, { slug: item.productSlug });
+          
+          if (productId) {
+            console.log(`[MIDTRANS_NOTIFICATION] Decrementing stock for product: ${item.productName}, Size: ${item.size}, Qty: ${item.quantity}`);
+            
+            // Note: We use the size filter to target the correct variant in the array
+            await writeClient
+              .patch(productId)
+              .dec({ [`variants[size == "${item.size}"].stock`]: item.quantity })
+              .commit();
+          }
+        } catch (itemError) {
+          console.error(`[MIDTRANS_NOTIFICATION] Failed to decrement stock for item ${item.productName}:`, itemError);
+        }
+      }
+    }
+
     await writeClient
       .patch(order._id)
       .set({

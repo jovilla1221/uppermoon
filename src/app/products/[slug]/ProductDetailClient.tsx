@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCart } from "@/context/CartContext";
+import { client } from "@/sanity/lib/client";
 
 interface Product {
   name: string;
@@ -11,27 +12,59 @@ interface Product {
   category: string;
   collection?: string;
   description?: string;
-  sizes?: string[];
+  sizes?: string[]; // Kept for legacy/compatibility if needed
+  variants?: { size: string; stock: number }[];
   image: string;
   gallery?: string[];
+  weight: number;
+  _id: string;
 }
 
 export default function ProductDetailClient({ product, relatedProducts }: { product: Product; relatedProducts: Product[] }) {
   const { addToCart, formatPrice } = useCart();
-  const [selectedSize, setSelectedSize] = useState<string | null>("M");
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [mainImage, setMainImage] = useState(product.image);
+  const [variants, setVariants] = useState(product.variants || []);
 
-  const availableSizes = product.sizes || ["S", "M", "L", "XL"];
+  // Set initial selected size to first available variant with stock
+  useEffect(() => {
+    if (variants.length > 0 && !selectedSize) {
+      const firstAvailable = variants.find(v => v.stock > 0);
+      if (firstAvailable) setSelectedSize(firstAvailable.size);
+      else setSelectedSize(variants[0].size); // Fallback to first even if out of stock
+    }
+  }, [variants]);
+
+  // Real-time stock sync
+  useEffect(() => {
+    const query = `*[_type == "product" && _id == $id][0] { variants }`;
+    const params = { id: product._id };
+
+    const subscription = client.listen(query, params).subscribe((update: any) => {
+      if (update.result && update.result.variants) {
+        setVariants(update.result.variants);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [product._id]);
+
+  const currentVariant = variants.find(v => v.size === selectedSize);
+  const currentStock = currentVariant ? currentVariant.stock : 0;
+  
   const gallery = product.gallery || [product.image];
 
   const handleAddToCart = () => {
     if (!selectedSize) return alert("Please select a size");
+    if (currentStock <= 0) return alert("This size is out of stock");
+    
     addToCart({
       name: product.name,
       price: product.price,
       size: selectedSize,
       quantity,
+      weight: product.weight || 500,
       image: product.image,
       collection: product.collection || product.category
     });
@@ -77,7 +110,14 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
           <h1 className="text-4xl md:text-5xl font-headline font-bold mb-4 tracking-tight leading-tight">
             {product.name}
           </h1>
-          <p className="text-xl font-body font-normal mb-10 text-on-surface">{formatPrice(product.price)}</p>
+          <div className="flex items-baseline gap-4 mb-10">
+            <p className="text-xl font-body font-normal text-on-surface">{formatPrice(product.price)}</p>
+            {variants.length > 0 && (
+              <span className="text-[10px] tracking-widest text-secondary uppercase">
+                {variants.reduce((acc, v) => acc + v.stock, 0)} TOTAL STOCK
+              </span>
+            )}
+          </div>
           
           {/* Selectors */}
           <div className="space-y-10">
@@ -87,32 +127,67 @@ export default function ProductDetailClient({ product, relatedProducts }: { prod
                 <span onClick={() => alert("Size Guide Modal will open here.")} className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary underline cursor-pointer hover:text-primary transition-colors">SIZE GUIDE</span>
               </div>
               <div className="grid grid-cols-4 gap-2">
-                {availableSizes.map((size) => (
+                {variants.map((v) => (
                   <button 
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`aspect-square border flex items-center justify-center font-label text-sm transition-colors ${selectedSize === size ? 'border-primary bg-primary text-on-primary' : 'border-outline-variant hover:border-primary'}`}
+                    key={v.size}
+                    onClick={() => {
+                      setSelectedSize(v.size);
+                      setQuantity(1);
+                    }}
+                    className={`aspect-square border flex flex-col items-center justify-center font-label transition-colors relative ${
+                      selectedSize === v.size 
+                      ? 'border-primary bg-primary text-on-primary' 
+                      : v.stock === 0 
+                        ? 'border-outline-variant bg-surface-container text-secondary opacity-40' 
+                        : 'border-outline-variant hover:border-primary'
+                    }`}
                   >
-                    {size}
+                    <span className="text-sm font-bold">{v.size}</span>
+                    {v.stock > 0 && v.stock < 5 && (
+                      <span className="text-[8px] absolute bottom-1 uppercase opacity-80">{v.stock} LEFT</span>
+                    )}
+                    {v.stock === 0 && (
+                      <span className="text-[8px] absolute bottom-1 uppercase">OUT</span>
+                    )}
                   </button>
                 ))}
               </div>
             </div>
             
             <div>
-              <span className="font-label text-[0.6875rem] uppercase tracking-widest block mb-4">QUANTITY</span>
+              <span className="font-label text-[0.6875rem] uppercase tracking-widest block mb-4">
+                QUANTITY {selectedSize && currentStock > 0 && currentStock <= 5 && <span className="text-primary ml-2 italic">— ONLY {currentStock} LEFT FOR {selectedSize}!</span>}
+                {selectedSize && currentStock === 0 && <span className="text-secondary ml-2 italic">— {selectedSize} IS OUT OF STOCK</span>}
+              </span>
               <div className="flex items-center border border-outline-variant w-fit">
-                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 py-3 hover:bg-surface-container transition-colors"><span className="material-symbols-outlined text-sm">remove</span></button>
-                <span className="px-6 py-3 font-label text-sm w-12 text-center">{quantity}</span>
-                <button onClick={() => setQuantity(quantity + 1)} className="px-4 py-3 hover:bg-surface-container transition-colors"><span className="material-symbols-outlined text-sm">add</span></button>
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))} 
+                  className="px-4 py-3 hover:bg-surface-container transition-colors disabled:opacity-30"
+                  disabled={currentStock === 0}
+                >
+                  <span className="material-symbols-outlined text-sm">remove</span>
+                </button>
+                <span className="px-6 py-3 font-label text-sm w-12 text-center">{currentStock === 0 ? 0 : quantity}</span>
+                <button 
+                  onClick={() => setQuantity(Math.min(currentStock, quantity + 1))} 
+                  className="px-4 py-3 hover:bg-surface-container transition-colors disabled:opacity-30"
+                  disabled={currentStock === 0 || quantity >= currentStock}
+                >
+                  <span className="material-symbols-outlined text-sm">add</span>
+                </button>
               </div>
             </div>
 
             <button 
               onClick={handleAddToCart}
-              className="w-full bg-primary text-on-primary py-5 font-label text-[0.6875rem] font-bold tracking-[0.2em] uppercase hover:bg-primary-container transition-colors"
+              disabled={!selectedSize || currentStock === 0}
+              className={`w-full py-5 font-label text-[0.6875rem] font-bold tracking-[0.2em] uppercase transition-colors ${
+                selectedSize && currentStock > 0 
+                ? 'bg-primary text-on-primary hover:bg-primary-container' 
+                : 'bg-surface-container text-secondary cursor-not-allowed'
+              }`}
             >
-              ADD TO CART
+              {!selectedSize ? "SELECT SIZE" : currentStock > 0 ? "ADD TO CART" : "SOLD OUT"}
             </button>
           </div>
           

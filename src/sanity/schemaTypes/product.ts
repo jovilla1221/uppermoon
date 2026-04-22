@@ -90,6 +90,43 @@ export const product = defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "variants",
+      title: "Inventory per Size",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "variant",
+          fields: [
+            { name: "size", type: "string", title: "Size" },
+            { name: "stock", type: "number", title: "Stock", initialValue: 0 }
+          ],
+          preview: {
+            select: {
+              title: "size",
+              stock: "stock"
+            },
+            prepare(selection) {
+              const { title, stock } = selection;
+              return {
+                title: `Size: ${title}`,
+                subtitle: `Stock: ${stock}`
+              }
+            }
+          }
+        }
+      ],
+      description: "Manage inventory for each size variant"
+    }),
+    defineField({
+      name: "weight",
+      title: "Weight (Grams)",
+      type: "number",
+      description: "Weight of the product in grams (for shipping calculation)",
+      initialValue: 500,
+      validation: (Rule) => Rule.required().min(0),
+    }),
   ],
   preview: {
     select: {

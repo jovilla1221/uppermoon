@@ -43,7 +43,25 @@ export const order = defineType({
         { name: "city", type: "string", title: "City" },
         { name: "province", type: "string", title: "Province" },
         { name: "postalCode", type: "string", title: "Postal Code" },
+        { name: "cityId", type: "string", title: "City ID" },
+        { name: "provinceId", type: "string", title: "Province ID" },
+        { name: "districtId", type: "string", title: "District ID" },
       ],
+    }),
+    defineField({
+      name: "courierName",
+      title: "Courier Name",
+      type: "string",
+    }),
+    defineField({
+      name: "courierService",
+      title: "Courier Service",
+      type: "string",
+    }),
+    defineField({
+      name: "waybill",
+      title: "Waybill / Resi",
+      type: "string",
     }),
     defineField({
       name: "items",

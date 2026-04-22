@@ -15,15 +15,23 @@ export async function GET() {
 export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
-    const { id, paymentStatus } = body;
+    const { id, ...updateData } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Missing order ID" }, { status: 400 });
     }
 
+    // Filter out undefined and add updatedAt
+    const filteredUpdate = Object.fromEntries(
+      Object.entries(updateData).filter(([_, v]) => v !== undefined)
+    );
+
     const result = await writeClient
       .patch(id)
-      .set({ paymentStatus, updatedAt: new Date().toISOString() })
+      .set({ 
+        ...filteredUpdate, 
+        updatedAt: new Date().toISOString() 
+      })
       .commit();
 
     return NextResponse.json({ success: true, id: result._id });

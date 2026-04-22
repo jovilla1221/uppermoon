@@ -25,6 +25,8 @@ export const allProductsQuery = groq`
     description,
     sizes,
     featured,
+    stock,
+    weight,
     "image": images[0].asset->url,
     "gallery": images[].asset->url,
     "rawImages": images[]{
@@ -48,6 +50,8 @@ export const productBySlugQuery = groq`
     description,
     sizes,
     featured,
+    stock,
+    weight,
     "image": images[0].asset->url,
     "gallery": images[].asset->url,
     "rawImages": images[]{

@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { cartItems, shippingAddress, customerPhone } = body;
+    const { cartItems, shippingAddress, customerPhone, shippingCost, courierName, courierService } = body;
 
     if (!cartItems || cartItems.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
 
     // 1. Calculate Prices
     const subtotal = cartItems.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
-    const shippingCost = 25000; // Flat rate IDR 25.000
-    const totalAmount = subtotal + shippingCost;
+    const actualShippingCost = shippingCost || 0;
+    const totalAmount = subtotal + actualShippingCost;
     const orderId = generateOrderId();
 
     // 2. Prepare Order Document for Sanity
@@ -43,7 +43,17 @@ export async function POST(req: NextRequest) {
       customerName: user.username,
       customerEmail: user.email,
       customerPhone,
-      shippingAddress,
+      shippingAddress: {
+        street: shippingAddress.street,
+        city: shippingAddress.city,
+        province: shippingAddress.province,
+        postalCode: shippingAddress.postalCode,
+        cityId: shippingAddress.cityId,
+        provinceId: shippingAddress.provinceId,
+        districtId: shippingAddress.districtId,
+      },
+      courierName,
+      courierService,
       items: cartItems.map((item: any) => ({
         _key: crypto.randomBytes(8).toString('hex'),
         productName: item.name,
@@ -55,7 +65,7 @@ export async function POST(req: NextRequest) {
         collection: item.collection,
       })),
       subtotal,
-      shippingCost,
+      shippingCost: actualShippingCost,
       totalAmount,
       paymentStatus: "pending",
       createdAt: new Date().toISOString(),
@@ -79,9 +89,9 @@ export async function POST(req: NextRequest) {
         })),
         {
           id: "SHIPPING",
-          price: shippingCost,
+          price: actualShippingCost,
           quantity: 1,
-          name: "Shipping Cost",
+          name: courierName ? `${courierName} - ${courierService}` : "Shipping Cost",
         }
       ],
       customer_details: {
