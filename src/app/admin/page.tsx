@@ -11,6 +11,7 @@ interface Product {
   collection?: string;
   description?: string;
   image?: string;
+  variants?: { size: string; stock: number }[];
 }
 
 export default function AdminPage() {
@@ -37,7 +38,12 @@ export default function AdminPage() {
     category: "TOPS",
     collection: "",
     description: "",
-    sizes: ["S", "M", "L", "XL"],
+    variants: [
+      { size: "S", stock: 0 },
+      { size: "M", stock: 0 },
+      { size: "L", stock: 0 },
+      { size: "XL", stock: 0 },
+    ],
   });
   const [existingImages, setExistingImages] = useState<any[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -227,7 +233,12 @@ export default function AdminPage() {
       category: product.category,
       collection: product.collection || "",
       description: product.description || "",
-      sizes: product.sizes || ["S", "M", "L", "XL"],
+      variants: product.variants?.length ? product.variants : [
+        { size: "S", stock: 0 },
+        { size: "M", stock: 0 },
+        { size: "L", stock: 0 },
+        { size: "XL", stock: 0 },
+      ],
     });
     setExistingImages(product.rawImages || []);
     setImageFiles([]); // Clear new uploads state
@@ -237,7 +248,15 @@ export default function AdminPage() {
   };
 
   const resetForm = () => {
-    setForm({ name: "", slug: "", price: "", category: "TOPS", collection: "", description: "", sizes: ["S", "M", "L", "XL"] });
+    setForm({ 
+      name: "", slug: "", price: "", category: "TOPS", collection: "", description: "", 
+      variants: [
+        { size: "S", stock: 0 },
+        { size: "M", stock: 0 },
+        { size: "L", stock: 0 },
+        { size: "XL", stock: 0 },
+      ]
+    });
     setExistingImages([]);
     setImageFiles([]);
     setImagePreviews([]);
@@ -602,30 +621,38 @@ export default function AdminPage() {
                 />
               </div>
               <div>
-                <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">Ukuran</label>
-                <div className="flex gap-2">
-                  {["XS", "S", "M", "L", "XL"].map((size) => (
-                    <button
-                      type="button"
-                      key={size}
-                      onClick={() => {
-                        setForm({
-                          ...form,
-                          sizes: form.sizes.includes(size)
-                            ? form.sizes.filter((s) => s !== size)
-                            : [...form.sizes, size],
-                        });
-                      }}
-                      className={`w-10 h-10 border text-xs font-bold transition-colors ${
-                        form.sizes.includes(size)
-                          ? "bg-white text-black border-white"
-                          : "bg-transparent text-neutral-500 border-neutral-700 hover:border-white"
-                      }`}
-                    >
-                      {size}
-                    </button>
+                <label className="text-[10px] uppercase tracking-[0.2em] text-neutral-400 block mb-2">Manajemen Stok per Ukuran</label>
+                <div className="grid grid-cols-2 gap-4">
+                  {form.variants.map((v, idx) => (
+                    <div key={v.size} className="flex flex-col gap-1">
+                      <span className="text-[10px] font-bold text-neutral-500">{v.size}</span>
+                      <input 
+                        type="number"
+                        value={v.stock}
+                        onChange={(e) => {
+                          const newVariants = [...form.variants];
+                          newVariants[idx].stock = Number(e.target.value);
+                          setForm({ ...form, variants: newVariants });
+                        }}
+                        className="bg-black border border-neutral-700 text-white px-3 py-2 text-xs focus:outline-none focus:border-white transition-colors"
+                        placeholder="Jumlah"
+                        min="0"
+                      />
+                    </div>
                   ))}
                 </div>
+                <button 
+                  type="button"
+                  onClick={() => {
+                    const size = prompt("Tambah ukuran baru (contoh: XXL):");
+                    if (size && !form.variants.find(v => v.size === size)) {
+                      setForm({ ...form, variants: [...form.variants, { size, stock: 0 }] });
+                    }
+                  }}
+                  className="mt-4 text-[10px] text-neutral-500 hover:text-white uppercase tracking-widest"
+                >
+                  + TAMBAH UKURAN LAIN
+                </button>
               </div>
             </div>
             <div className="mt-6">
