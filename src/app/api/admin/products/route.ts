@@ -25,7 +25,12 @@ export async function POST(req: NextRequest) {
       category: body.category,
       collection: body.collection || "",
       description: body.description || "",
-      sizes: body.sizes || ["S", "M", "L", "XL"],
+      sizes: (body.variants || []).map((v: any) => v.size), // Keep sizes for compatibility
+      variants: (body.variants || []).map((v: any, idx: number) => ({
+        _key: `v-${idx}-${Date.now()}`,
+        size: v.size,
+        stock: Number(v.stock)
+      })),
       featured: body.featured || false,
       images: body.newAssetIds
         ? body.newAssetIds.map((id: string, idx: number) => ({
@@ -60,7 +65,12 @@ export async function PATCH(req: NextRequest) {
       category: updates.category,
       collection: updates.collection || "",
       description: updates.description || "",
-      sizes: updates.sizes,
+      sizes: (updates.variants || []).map((v: any) => v.size),
+      variants: (updates.variants || []).map((v: any, idx: number) => ({
+        _key: `v-${idx}-${Date.now()}`,
+        size: v.size,
+        stock: Number(v.stock)
+      })),
       featured: updates.featured || false,
     };
 
