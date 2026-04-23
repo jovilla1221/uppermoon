@@ -2,7 +2,15 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { serialize } from "cookie";
 
-const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret-use-env";
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("FATAL: JWT_SECRET environment variable is not set.");
+  }
+  return secret;
+}
+
+const JWT_SECRET = getJwtSecret();
 const COOKIE_NAME = "session";
 
 export interface UserSession {

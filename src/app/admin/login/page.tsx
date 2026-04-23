@@ -48,8 +48,8 @@ function AdminLoginForm() {
         router.push(callbackUrl.startsWith("/admin") ? callbackUrl : "/admin");
         router.refresh();
       }, 1000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Gagal masuk ke dashboard");
     } finally {
       setLoading(false);
     }
@@ -91,7 +91,7 @@ function AdminLoginForm() {
             value={identifier}
             onChange={(e) => setIdentifier(e.target.value)}
             className="w-full bg-transparent border-b border-outline-variant py-3 outline-none focus:border-primary transition-colors text-on-surface font-body"
-            placeholder="admin1"
+            placeholder="Enter username"
           />
         </div>
 

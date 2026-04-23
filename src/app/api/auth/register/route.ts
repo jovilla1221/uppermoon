@@ -4,6 +4,7 @@ import { hashPassword } from "@/lib/auth";
 import { writeClient } from "@/sanity/lib/writeClient";
 import { sendEmailOtpViaResend } from "@/lib/resend";
 import bcrypt from "bcrypt";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const RegisterSchema = z.object({
   fullName: z.string().min(2, "Nama lengkap terlalu pendek"),
@@ -13,6 +14,21 @@ const RegisterSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Rate limit: 5 attempts per hour per IP
+    const ip = getClientIp(request);
+    const { limited, retryAfterSeconds } = rateLimit(ip, {
+      storeName: "register",
+      max: 5,
+      windowMs: 60 * 60 * 1000,
+    });
+
+    if (limited) {
+      return NextResponse.json(
+        { error: `Terlalu banyak permintaan. Coba lagi dalam ${Math.ceil(retryAfterSeconds / 60)} menit.` },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const parsed = RegisterSchema.safeParse(body);
 
@@ -125,7 +141,7 @@ export async function POST(request: Request) {
       email 
     });
     
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[REGISTER_API] Error:", err);
     return NextResponse.json({ error: "Terjadi kesalahan pada server" }, { status: 500 });
   }

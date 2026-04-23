@@ -3,6 +3,7 @@ import { z } from "zod";
 import bcrypt from "bcrypt";
 import { writeClient } from "@/sanity/lib/writeClient";
 import { hashPassword } from "@/lib/auth";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const ResetPasswordSchema = z.object({
   email: z.string().email("Email tidak valid"),
@@ -12,6 +13,21 @@ const ResetPasswordSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Rate limit: 5 attempts per 15 minutes per IP
+    const ip = getClientIp(request);
+    const { limited, retryAfterSeconds } = rateLimit(ip, {
+      storeName: "reset-password",
+      max: 5,
+      windowMs: 15 * 60 * 1000,
+    });
+
+    if (limited) {
+      return NextResponse.json(
+        { error: `Terlalu banyak percobaan. Coba lagi dalam ${retryAfterSeconds} detik.` },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const parsed = ResetPasswordSchema.safeParse(body);
 

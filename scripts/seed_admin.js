@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '.env.local' });
 const bcrypt = require('bcrypt');
 
 async function createAdmin() {
@@ -6,20 +7,26 @@ async function createAdmin() {
   const client = createClient({
     projectId: "bf20iv8w",
     dataset: "production",
-    token: "skQ6VIgxocM4PSZs0yqxNTqjFTXWMQm1y3Wn7kqELB1rMpfNFquhRAeQncxbIlL4tVRIxZzqQMSQrMHVcmqLJg0Cg5KKnmZYDfeoHe8vFSwJbMnSVvKL0qgH41ucFWU0JWxMxUndkXrL0p7nnvjgq0rfxTdrF1KlaaeU06K2jixfkOsFcY6C",
+    token: process.env.SANITY_API_WRITE_TOKEN,
     useCdn: false,
     apiVersion: '2023-05-03',
   });
 
-  const username = "admin1";
-  const password = "TysdbeiGFN1";
-  const email = "filla.saputro@gmail.com"; 
+  // NOTE: Set these via environment variables or change before running
+  const username = process.env.ADMIN_USERNAME || "admin1";
+  const password = process.env.ADMIN_PASSWORD;
+  const email = process.env.ADMIN_EMAIL || "filla.saputro@gmail.com"; 
+
+  if (!password) {
+    console.error("ERROR: Set ADMIN_PASSWORD environment variable before running this script.");
+    process.exit(1);
+  }
 
   try {
     console.log('Hashing password...');
     const passwordHash = await bcrypt.hash(password, 12);
 
-    console.log('Checking if admin1 already exists...');
+    console.log('Checking if admin already exists...');
     const existing = await client.fetch('*[_type == "adminUser" && (username == $username || email == $email)][0]', { username, email });
 
     if (existing) {

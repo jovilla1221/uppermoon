@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { comparePassword, setSessionCookie } from "@/lib/auth";
 import { writeClient } from "@/sanity/lib/writeClient";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 const LoginSchema = z.object({
   identifier: z.string().min(1, "Email atau username wajib diisi"),
@@ -10,6 +11,21 @@ const LoginSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    // Rate limit: 5 attempts per 15 minutes per IP
+    const ip = getClientIp(request);
+    const { limited, retryAfterSeconds } = rateLimit(ip, {
+      storeName: "login",
+      max: 5,
+      windowMs: 15 * 60 * 1000,
+    });
+
+    if (limited) {
+      return NextResponse.json(
+        { error: `Terlalu banyak percobaan. Coba lagi dalam ${retryAfterSeconds} detik.` },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     const parsed = LoginSchema.safeParse(body);
 
