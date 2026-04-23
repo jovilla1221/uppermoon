@@ -10,7 +10,6 @@ function getJwtSecret(): string {
   return secret;
 }
 
-const JWT_SECRET = getJwtSecret();
 const COOKIE_NAME = "session";
 
 export interface UserSession {
@@ -29,12 +28,14 @@ export async function comparePassword(password: string, hash: string): Promise<b
 }
 
 export function signToken(payload: UserSession): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "7d" });
+  const secret = getJwtSecret();
+  return jwt.sign(payload, secret, { expiresIn: "7d" });
 }
 
 export function verifyToken(token: string): UserSession | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as UserSession;
+    const secret = getJwtSecret();
+    return jwt.verify(token, secret) as UserSession;
   } catch (error) {
     return null;
   }
