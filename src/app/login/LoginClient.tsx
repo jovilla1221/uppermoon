@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -15,6 +15,12 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("reset") === "success") {
+      setSuccess("Password berhasil direset. Silakan login dengan password baru Anda.");
+    }
+  }, [searchParams]);
 
   // Login Form State
   const [identifier, setIdentifier] = useState("");
@@ -53,8 +59,8 @@ function LoginForm() {
         router.push(finalUrl);
         router.refresh();
       }, 1000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Gagal masuk");
     } finally {
       setLoading(false);
     }
@@ -98,7 +104,7 @@ function LoginForm() {
             <label htmlFor="password" className="font-label text-[0.6875rem] uppercase tracking-widest text-secondary block">
               Password
             </label>
-            <Link href="#" className="font-label text-[0.625rem] text-secondary hover:text-primary transition-colors underline">
+            <Link href="/forgot-password" className="font-label text-[0.625rem] text-secondary hover:text-primary transition-colors underline">
               FORGOT?
             </Link>
           </div>
@@ -124,7 +130,7 @@ function LoginForm() {
 
       <div className="mt-10 text-center border-t border-surface-container pt-8">
         <p className="font-label text-[0.6875rem] tracking-widest uppercase text-secondary">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="text-primary font-bold hover:opacity-70 transition-opacity">
             CREATE ONE
           </Link>

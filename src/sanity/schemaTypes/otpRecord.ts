@@ -29,5 +29,17 @@ export const otpRecordType = defineType({
       type: "number",
       initialValue: 0,
     }),
+    defineField({
+      name: "purpose",
+      title: "Purpose",
+      type: "string",
+      initialValue: "registration",
+      options: {
+        list: [
+          { title: "Registration", value: "registration" },
+          { title: "Password Reset", value: "password-reset" },
+        ],
+      },
+    }),
   ],
 });
