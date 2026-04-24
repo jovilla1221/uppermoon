@@ -38,15 +38,23 @@ export async function POST(request: Request) {
 
     const { email } = parsed.data;
 
-    // Check if email exists and is verified (siteUser only)
-    const user = await writeClient.fetch(
-      `*[_type == "siteUser" && email == $email && isVerified == true][0]`,
+    // Check if email exists in either adminUser or siteUser
+    let user = await writeClient.fetch(
+      `*[_type == "adminUser" && email == $email][0]`,
       { email }
     );
+
+    if (!user) {
+      user = await writeClient.fetch(
+        `*[_type == "siteUser" && email == $email][0]`,
+        { email }
+      );
+    }
 
     // SECURITY: Always return success even if user doesn't exist
     // This prevents email enumeration attacks
     if (!user) {
+      console.log(`[FORGOT_PASSWORD] Attempt for non-existent email: ${email}`);
       return NextResponse.json({
         success: true,
         message: "Jika email terdaftar, kode verifikasi telah dikirim.",
