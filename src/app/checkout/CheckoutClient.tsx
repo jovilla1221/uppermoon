@@ -285,24 +285,24 @@ export default function CheckoutClient() {
         <div className="lg:col-span-7">
           <form id="checkout-form" onSubmit={handlePay} className="space-y-12">
             <section className="space-y-10">
-              <h2 className="font-label text-[0.75rem] font-bold tracking-[0.2em] uppercase text-primary border-b border-outline-variant/30 pb-4">1. SHIPPING ADDRESS</h2>
+              <h2 className="font-label text-[0.75rem] font-bold tracking-[0.2em] uppercase text-primary border-b border-outline-variant/30 pb-4">1. SHIPPING ADDRESS / ALAMAT PENGIRIMAN</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Basic Info */}
                 <div className="space-y-3 md:col-span-2">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Full Name</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Full Name / Nama Lengkap</label>
                   <input 
                     type="text" 
                     required 
                     value={customerName} 
                     onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="Recipient Name"
+                    placeholder="Recipient Name / Nama Penerima"
                     className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none" 
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Phone Number</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Phone Number / Nomor Telepon</label>
                   <input 
                     type="tel" 
                     required 
@@ -314,7 +314,7 @@ export default function CheckoutClient() {
                 </div>
                 
                 <div className="space-y-3">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Postal Code</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Postal Code / Kode Pos</label>
                   <input 
                     type="text" 
                     required 
@@ -326,33 +326,33 @@ export default function CheckoutClient() {
                 </div>
 
                 <div className="space-y-3 md:col-span-2">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Street Address</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Street Address / Alamat Lengkap</label>
                   <textarea 
                     required 
                     rows={2}
                     value={shippingInfo.street}
                     onChange={(e) => setShippingInfo({...shippingInfo, street: e.target.value})}
-                    placeholder="Building, House Number, Floor..."
+                    placeholder="Building, House Number, Floor... / Gedung, No Rumah, Lantai..."
                     className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none resize-none" 
                   />
                 </div>
 
                 {/* Region Selection */}
                 <div className="space-y-3">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Province</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Province / Provinsi</label>
                   <select 
                     required 
                     value={shippingInfo.provinceId}
                     onChange={handleProvinceChange}
                     className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none appearance-none cursor-pointer"
                   >
-                    <option value="">Select Province</option>
+                    <option value="">Select Province / Pilih Provinsi</option>
                     {provinces.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">City</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">City / Kota atau Kabupaten</label>
                   <select 
                     required 
                     disabled={!shippingInfo.provinceId || isLoadingRegions}
@@ -360,13 +360,13 @@ export default function CheckoutClient() {
                     onChange={handleCityChange}
                     className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none appearance-none cursor-pointer disabled:opacity-50"
                   >
-                    <option value="">{isLoadingRegions ? "Loading..." : "Select City"}</option>
+                    <option value="">{isLoadingRegions ? "Loading..." : "Select City / Pilih Kota atau Kabupaten"}</option>
                     {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
 
                 <div className="space-y-3 md:col-span-2">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">District (Kecamatan)</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">District / Kecamatan</label>
                   <select 
                     required 
                     disabled={!shippingInfo.cityId || isLoadingRegions}
@@ -374,7 +374,7 @@ export default function CheckoutClient() {
                     onChange={handleDistrictChange}
                     className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none appearance-none cursor-pointer disabled:opacity-50"
                   >
-                    <option value="">{isLoadingRegions ? "Loading..." : "Select District"}</option>
+                    <option value="">{isLoadingRegions ? "Loading..." : "Select District / Pilih Kecamatan"}</option>
                     {districts.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
                   </select>
                 </div>
@@ -382,11 +382,11 @@ export default function CheckoutClient() {
             </section>
 
             <section className="space-y-10">
-              <h2 className="font-label text-[0.75rem] font-bold tracking-[0.2em] uppercase text-primary border-b border-outline-variant/30 pb-4">2. COURIER & SERVICE</h2>
+              <h2 className="font-label text-[0.75rem] font-bold tracking-[0.2em] uppercase text-primary border-b border-outline-variant/30 pb-4">2. COURIER & SERVICE / KURIR & LAYANAN</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-3">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Select Courier</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Select Courier / Pilih Kurir</label>
                   <select 
                     required 
                     disabled={!shippingInfo.districtId}
@@ -394,13 +394,13 @@ export default function CheckoutClient() {
                     onChange={(e) => setSelectedCourier(e.target.value)}
                     className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none appearance-none cursor-pointer disabled:opacity-50"
                   >
-                    <option value="">Select Courier</option>
+                    <option value="">Select Courier / Pilih Kurir</option>
                     {COURIERS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
 
                 <div className="space-y-3">
-                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Shipping Service</label>
+                  <label className="font-label text-[0.625rem] text-secondary tracking-widest uppercase block">Shipping Service / Layanan Pengiriman</label>
                   <select 
                     required 
                     disabled={shippingOptions.length === 0 || isLoadingShipping}
@@ -411,7 +411,7 @@ export default function CheckoutClient() {
                     }}
                     className="w-full bg-surface-container px-5 py-4 text-sm border-none focus:ring-1 focus:ring-primary transition-all outline-none appearance-none cursor-pointer disabled:opacity-50"
                   >
-                    <option value="">{isLoadingShipping ? "Calculating..." : "Select Service"}</option>
+                    <option value="">{isLoadingShipping ? "Calculating..." : "Select Service / Pilih Layanan"}</option>
                     {shippingOptions.map(o => (
                       <option key={o.service} value={o.service}>
                         {o.service} - {formatPrice(o.cost)} ({o.etd} days)
@@ -422,9 +422,9 @@ export default function CheckoutClient() {
               </div>
               
               {isLoadingShipping && (
-                <div className="flex items-center gap-3 text-secondary text-[0.625rem] tracking-widest uppercase">
+               <div className="flex items-center gap-3 text-secondary text-[0.625rem] tracking-widest uppercase">
                   <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
-                  Calculating shipping costs...
+                  Calculating shipping costs... / Menghitung ongkos kirim...
                 </div>
               )}
             </section>
