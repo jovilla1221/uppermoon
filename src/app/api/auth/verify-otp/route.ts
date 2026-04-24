@@ -22,7 +22,7 @@ export async function POST(request: Request) {
 
     // Get OTP record from Sanity
     const otpRecord = await writeClient.fetch(
-      `*[_type == "otpRecord" && email == $email][0]`,
+      `*[_type == "otpRecord" && email == $email && (!defined(purpose) || purpose == "registration")] | order(_updatedAt desc)[0]`,
       { email }
     );
 

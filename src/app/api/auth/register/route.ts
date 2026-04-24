@@ -70,13 +70,13 @@ export async function POST(request: Request) {
 
       // Upsert OTP record
       const existingOtp = await writeClient.fetch(
-        `*[_type == "otpRecord" && email == $email][0]`,
+        `*[_type == "otpRecord" && email == $email && (!defined(purpose) || purpose == "registration")] | order(_updatedAt desc)[0]`,
         { email }
       );
       if (existingOtp) {
         await writeClient.patch(existingOtp._id).set({ otpHash, expiresAt, attempts: 0 }).commit();
       } else {
-        await writeClient.create({ _type: "otpRecord", email, otpHash, expiresAt, attempts: 0 });
+        await writeClient.create({ _type: "otpRecord", email, otpHash, expiresAt, attempts: 0, purpose: "registration" });
       }
 
       // Send email
@@ -112,14 +112,23 @@ export async function POST(request: Request) {
     const otpHash = await bcrypt.hash(otp, 12);
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
 
-    // Store OTP in Sanity
-    await writeClient.create({
-      _type: "otpRecord",
-      email,
-      otpHash,
-      expiresAt,
-      attempts: 0,
-    });
+    // Upsert OTP record
+    const existingOtp = await writeClient.fetch(
+      `*[_type == "otpRecord" && email == $email && (!defined(purpose) || purpose == "registration")] | order(_updatedAt desc)[0]`,
+      { email }
+    );
+    if (existingOtp) {
+      await writeClient.patch(existingOtp._id).set({ otpHash, expiresAt, attempts: 0 }).commit();
+    } else {
+      await writeClient.create({
+        _type: "otpRecord",
+        email,
+        otpHash,
+        expiresAt,
+        attempts: 0,
+        purpose: "registration",
+      });
+    }
 
     // Send via Resend
     const emailResult = await sendEmailOtpViaResend({ 

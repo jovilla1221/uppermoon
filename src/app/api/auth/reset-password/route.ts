@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     // Get OTP record for password-reset purpose
     const otpRecord = await writeClient.fetch(
-      `*[_type == "otpRecord" && email == $email && purpose == "password-reset"][0]`,
+      `*[_type == "otpRecord" && email == $email && purpose == "password-reset"] | order(_updatedAt desc)[0]`,
       { email }
     );
 

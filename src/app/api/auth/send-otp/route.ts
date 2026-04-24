@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     // Store in Sanity (Upsert based on email)
     // Find existing OTP record for this email
     const existingOtp = await writeClient.fetch(
-      `*[_type == "otpRecord" && email == $email][0]`,
+      `*[_type == "otpRecord" && email == $email && (!defined(purpose) || purpose == "registration")] | order(_updatedAt desc)[0]`,
       { email }
     );
 
@@ -43,6 +43,7 @@ export async function POST(request: Request) {
         otpHash,
         expiresAt,
         attempts: 0,
+        purpose: "registration",
       });
     }
 
